@@ -1,0 +1,5 @@
+.venv/
+config.toml
+out.json
+test.py
+__pycache__/
