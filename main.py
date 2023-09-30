@@ -2,6 +2,7 @@ import logging, toml, time
 
 from logging.handlers import RotatingFileHandler
 from API import MemeApi, CosmosRequestApi
+from function import * 
 
 
 config_toml = toml.load('config.toml')
@@ -36,33 +37,37 @@ def main():
 
         for name_network in memo.Get_Available_Blockchains_Types():
             try: 
+                id_network = str(name_network.get('id'))
                 cosmos = CosmosRequestApi.CosmosRequestApi(
                     rest=config_toml['network'][name_network.get('name')]['rest'],
                     rpc=config_toml['network'][name_network.get('name')]['rpc'],
-                    valoper_address=config_toml['network'][name_network.get('name')]['valoper_address']
+                    valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
+                    address = config_toml['network'][name_network.get('name')]['address']
                 )
                 transactions_type =  memo.Get_Available_Transaction_Types()
                 wallet_type = memo.Get_Available_Wallet_Types()
 
 
-                data_memo_address_time = cosmos.Check_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type)
+                data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type)
 
                 for height in data_memo_address_time:
                     for address in data_memo_address_time[height].keys():
                         
-                        if address not in cache_users():
+                        if id_network not in cache_users:
+                                cache_users[id_network] = {}
+                                
+                        if address not in cache_users[id_network]:
                             log.info(f"Add new user with: {address}")
-                            userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height]['memo'], blockchain=name_network.get('id'))
-                            if name_network.get('id') not in cache_users:
-                                cache_users[name_network.get('id')] = {}
+                            userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
 
-                            cache_users[name_network.get('id')][address] = userId
 
-                        userId = cache_users[name_network.get('id')][address]
+                            cache_users[id_network][address] = userId
+
+                        userId = cache_users[id_network][address]
                         memo.Add_New_Transactions(userId=userId, 
                                                   typeId=data_memo_address_time[height][address]['typeId'],
-                                                  amount=data_memo_address_time[height][address]['amount'],
-                                                  executedAt=data_memo_address_time[height][address]['time'],
+                                                  amount=str(data_memo_address_time[height][address]['amount']),
+                                                  executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
                                                   hash=data_memo_address_time[height][address]['hash']
                                                   )
 
@@ -80,6 +85,16 @@ def main():
                 #         userId = memo.Add_New_User(address=address, walletType=value.get('id'), blockchain=name_network.get('id'))
                         
                 #         print(cache_users, userId)
+                for address in cache_users[id_network]:
+
+                    amountReward_user = cosmos.Get_All_Rewards(address)
+                    amountReward_validator = cosmos.Get_All_Commission()
+                    amountDelegate = cosmos.Get_Balance_Delegate(address)
+                    log.info(f"All rewarsd: {amountReward_user}, {amountReward_validator}, {amountDelegate}")
+
+                    userId = cache_users[id_network][address]
+                    memo.Update_User_Stats(userId, str(amountDelegate), str(amountReward_user), str(amountReward_validator))
+
                 log.info(f"wait {config_toml['time_update'] } min")
                 time.sleep(config_toml['time_update'] * 60)
             except:

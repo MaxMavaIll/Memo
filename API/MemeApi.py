@@ -22,7 +22,7 @@ class MemeApi():
         if answer.status_code == 200:
             log.info("Success, I get 200")
             log.debug(answer.text)
-            return list(answer.text)
+            return json.loads(answer.text)
         
         else:
             log.error(f"Fail, I get {answer.status_code}")
@@ -111,24 +111,58 @@ class MemeApi():
             amount: str,
             executedAt: str,
             hash: str
-            # amountRewards: str,
-            # amountValidatorRewards: str
             ):
         log.info("#--Add_New_User--#")
-        data = {
-            "userId": userId, 
-            "typeId": typeId, 
+        payload = json.dumps({
+            "userId": userId,
+            "typeId": typeId,
             "amount": amount,
             "executedAt": executedAt,
-            "hash": hash,
-            # "amountRewards": amountRewards,
-            # "amountValidatorRewards": amountValidatorRewards
+            "hash": hash
+            })
+        
+        headers = {
+            'Content-Type': 'application/json'
             }
 
-        answer = requests.post(f"{self.HOSTNAME}/api/transactions", data=data)
+        answer = requests.request("POST", f"{self.HOSTNAME}/api/transactions", headers=headers, data=payload)
+
+
+        if answer.status_code == 201:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
+
+
+    def Update_User_Stats(
+            self, 
+            userId: int, 
+            amountDelegated: str, 
+            amountRewards: str,
+            amountValidatorRewards: str
+            ):
+        log.info("#--Add_New_User--#")
+
+        payload = json.dumps({
+        "userId": userId,
+        "amountDelegated": amountDelegated,
+        "amountRewards": amountRewards,
+        "amountValidatorRewards": amountValidatorRewards
+        })
+
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        answer = requests.request("PATCH", f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload)
+
 
         if answer.status_code == 200:
             log.info("Success, I get 200")
+            log.debug(answer.text)
         
         else:
             log.error(f"Fail, I get {answer.status_code}")

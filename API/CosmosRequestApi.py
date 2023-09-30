@@ -15,10 +15,11 @@ log.addHandler(handler2)
 class CosmosRequestApi():
     CACHE_HEIGHT = dict()
     
-    def __init__(self, rest: str, rpc: str, valoper_address: str) -> None:
+    def __init__(self, rest: str, rpc: str, valoper_address: str, address: str) -> None:
         self.rest = rest
         self.rpc = rpc
         self.valoper_address = valoper_address
+        self.address = address
         self.tx_hash = []
         self.tx_hash_user = []
         self.executedAt = []
@@ -138,13 +139,12 @@ class CosmosRequestApi():
             # type_transactions = data['messages'][0]['@type']
 
             # if data['messages'][0]['@type'][-8:].upper() 
-            return data['tx']['body']
+            return data['tx']['body'], data
         
         else:
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
-        
-
+  
     def Get_Hash_Transactions_Height(
             self,
             height: int
@@ -174,11 +174,11 @@ class CosmosRequestApi():
         for hash in self.Get_Hash_Transactions_Height(height=height):
             
             
-            data = self.Get_Memo_Address_With_Transaction(hash=hash)
+            data, full_data = self.Get_Memo_Address_With_Transaction(hash=hash)
 
             for transactions_type in transactions_types:
                 if data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper() != transactions_type.get('name') or \
-                    data['validator_address'] != self.valoper_address:
+                    data['messages'][0]['validator_address'] != self.valoper_address:
                     continue
                 
                 for wallet_type in wallet_types:
@@ -192,20 +192,18 @@ class CosmosRequestApi():
                 #     continue
 
                     
-                    amount = int(data['messages']['amount']['amount']) / 1000000
-                    time = data['tx_response']['timestamp']
+                    amount = int(data['messages'][0]['amount']['amount']) / 1000000
+                    time = full_data['tx_response']['timestamp']
 
-                    if data["memo"] == wallet_type.get('name'):
-                        cache_hashes[data['delegator_address']] = {'memo': wallet_type.get('id'), 
-                                                                   'typeId': transactions_type.get('id'), 
-                                                                   'amount': amount,
-                                                                   'hash': hash,
-                                                                   'time': time
-                                                                   }
+
+                    cache_hashes[data['messages'][0]['delegator_address']] = {'memo': wallet_type.get('id'), 
+                                                                'typeId': transactions_type.get('id'), 
+                                                                'amount': amount,
+                                                                'hash': hash,
+                                                                'time': time
+                                                                }
 
         return cache_hashes
-
-    
 
     def get_height(self) -> int:
 
@@ -220,8 +218,7 @@ class CosmosRequestApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
-
-    def Check_Block_Memo(
+    def Get_Block_Memo(
             self,
             transactions_type: dict,
             wallet_type: dict
@@ -230,6 +227,7 @@ class CosmosRequestApi():
             settings_json = work_json.get_json()
             height = settings_json['last_height']
             last_height_network = self.get_height()
+            # last_height_network = 18152419
             cache_hashes = {}
             
             
@@ -247,10 +245,64 @@ class CosmosRequestApi():
             settings_json['last_height'] = last_height_network
             work_json.set_json(settings_json)
             return cache_hashes
+        
         except:
             log.exception("Error Cosmos API")
             return {}
 
+    def Get_All_Rewards(
+            self,
+            address_user: str
+    ) -> int: 
+        # if address_user == '':
+        #     address_user = self.address
+        
+        answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}")
+        # answer = requests.get(f"{self.rest}/cosmos/staking/v1beta1/delegations/{address_user}")
+
+        if answer.status_code == 200:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+            data = json.loads(answer.text)
+            return float(data['rewards'][-1]['amount']) / 1000000
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
+
+
+    def Get_All_Commission(self) -> int:
+        answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/validators/{self.valoper_address}/commission")
+
+        if answer.status_code == 200:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+            data = json.loads(answer.text)
+            
+            return float(data['commission']['commission'][-1]['amount']) / 1000000
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
+
+    def Get_Balance_Delegate(
+            self,
+            address_user: str
+    ): 
+        
+        answer = requests.get(f"{self.rest}/cosmos/staking/v1beta1/delegations/{address_user}")
+
+        if answer.status_code == 200:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+            data = json.loads(answer.text)
+            for tmp in data['delegation_responses']:
+                if tmp['delegation']['validator_address'] == self.valoper_address:
+                    return float(tmp['balance']['amount']) / 1000000
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
         
 
 # a = CosmosRequestApi(config_toml["network"]["Cosmos"]["rest"], config_toml["network"]["Cosmos"]["rpc"], config_toml["network"]["Cosmos"]["valoper_address"])
