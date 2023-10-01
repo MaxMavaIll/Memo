@@ -4,3 +4,4 @@ out.json
 test.py
 logs/
 __pycache__/
+settings.json

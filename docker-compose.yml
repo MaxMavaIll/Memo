@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  memo:
+    image: server_memo
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    container_name: memo_monitoring
+    network_mode: host
+    volumes:
+      - ./logs:/app/logs
+      - ./config.toml:/app/config.toml
+      - ./settings.json:/app/settings.json

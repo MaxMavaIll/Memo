@@ -1,72 +1,18 @@
-API.MemeApi 2023-09-30 19:09:08,660 INFO #--Get_Cache--#
-API.MemeApi 2023-09-30 19:09:08,857 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:09:08,857 DEBUG {"1":{"cosmos1xgeqpr76lxdlf3zh7acpl503cxcalfamf3h2fv":1}}
-API.MemeApi 2023-09-30 19:09:08,859 INFO #--Get_Available_Blockchains_Types--#
-API.MemeApi 2023-09-30 19:09:09,014 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:09:09,014 DEBUG [{"id":1,"name":"Cosmos"}]
-API.MemeApi 2023-09-30 19:09:09,016 INFO #--Get_Available_Transaction_Types--#
-API.MemeApi 2023-09-30 19:09:09,162 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:09:09,162 DEBUG [{"id":1,"name":"DELEGATE"},{"id":2,"name":"UNDELEGATE"}]
-API.MemeApi 2023-09-30 19:09:09,163 INFO #--Get_Available_Wallet_Types--#
-API.MemeApi 2023-09-30 19:09:09,308 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:09:09,308 DEBUG [{"id":1,"name":"Trust Wallet"},{"id":2,"name":"Safepal"}]
-API.MemeApi 2023-09-30 19:09:09,818 INFO #--Add_New_User--#
-API.MemeApi 2023-09-30 19:09:10,006 ERROR Fail, I get 200
-API.MemeApi 2023-09-30 19:09:10,007 ERROR Answer with server: {"message":"User stats was updated!"}
-API.MemeApi 2023-09-30 19:10:18,732 INFO #--Get_Cache--#
-API.MemeApi 2023-09-30 19:10:18,894 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:18,894 DEBUG {"1":{"cosmos1xgeqpr76lxdlf3zh7acpl503cxcalfamf3h2fv":1}}
-API.MemeApi 2023-09-30 19:10:18,895 INFO #--Get_Available_Blockchains_Types--#
-API.MemeApi 2023-09-30 19:10:19,038 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:19,038 DEBUG [{"id":1,"name":"Cosmos"}]
-API.MemeApi 2023-09-30 19:10:19,039 INFO #--Get_Available_Transaction_Types--#
-API.MemeApi 2023-09-30 19:10:19,188 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:19,189 DEBUG [{"id":1,"name":"DELEGATE"},{"id":2,"name":"UNDELEGATE"}]
-API.MemeApi 2023-09-30 19:10:19,191 INFO #--Get_Available_Wallet_Types--#
-API.MemeApi 2023-09-30 19:10:19,343 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:19,343 DEBUG [{"id":1,"name":"Trust Wallet"},{"id":2,"name":"Safepal"}]
-API.MemeApi 2023-09-30 19:10:19,891 INFO #--Add_New_User--#
-API.MemeApi 2023-09-30 19:10:20,082 ERROR Fail, I get 200
-API.MemeApi 2023-09-30 19:10:20,083 ERROR Answer with server: {"message":"User stats was updated!"}
-API.MemeApi 2023-09-30 19:10:39,728 INFO #--Get_Cache--#
-API.MemeApi 2023-09-30 19:10:39,890 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:39,891 DEBUG {"1":{"cosmos1xgeqpr76lxdlf3zh7acpl503cxcalfamf3h2fv":1}}
-API.MemeApi 2023-09-30 19:10:39,892 INFO #--Get_Available_Blockchains_Types--#
-API.MemeApi 2023-09-30 19:10:40,043 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:40,044 DEBUG [{"id":1,"name":"Cosmos"}]
-API.MemeApi 2023-09-30 19:10:40,048 INFO #--Get_Available_Transaction_Types--#
-API.MemeApi 2023-09-30 19:10:40,204 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:40,205 DEBUG [{"id":1,"name":"DELEGATE"},{"id":2,"name":"UNDELEGATE"}]
-API.MemeApi 2023-09-30 19:10:40,209 INFO #--Get_Available_Wallet_Types--#
-API.MemeApi 2023-09-30 19:10:40,366 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:40,367 DEBUG [{"id":1,"name":"Trust Wallet"},{"id":2,"name":"Safepal"}]
-API.MemeApi 2023-09-30 19:10:40,885 INFO #--Add_New_User--#
-API.MemeApi 2023-09-30 19:10:41,076 ERROR Fail, I get 200
-API.MemeApi 2023-09-30 19:10:41,077 ERROR Answer with server: {"message":"User stats was updated!"}
-API.MemeApi 2023-09-30 19:10:53,011 INFO #--Get_Cache--#
-API.MemeApi 2023-09-30 19:10:53,164 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:53,164 DEBUG {"1":{"cosmos1xgeqpr76lxdlf3zh7acpl503cxcalfamf3h2fv":1}}
-API.MemeApi 2023-09-30 19:10:53,167 INFO #--Get_Available_Blockchains_Types--#
-API.MemeApi 2023-09-30 19:10:53,316 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:53,316 DEBUG [{"id":1,"name":"Cosmos"}]
-API.MemeApi 2023-09-30 19:10:53,317 INFO #--Get_Available_Transaction_Types--#
-API.MemeApi 2023-09-30 19:10:53,469 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:53,470 DEBUG [{"id":1,"name":"DELEGATE"},{"id":2,"name":"UNDELEGATE"}]
-API.MemeApi 2023-09-30 19:10:53,473 INFO #--Get_Available_Wallet_Types--#
-API.MemeApi 2023-09-30 19:10:53,626 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:53,626 DEBUG [{"id":1,"name":"Trust Wallet"},{"id":2,"name":"Safepal"}]
-API.MemeApi 2023-09-30 19:10:54,092 INFO #--Add_New_User--#
-API.MemeApi 2023-09-30 19:10:54,274 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:10:54,275 DEBUG {"message":"User stats was updated!"}
-API.MemeApi 2023-09-30 19:11:54,281 INFO #--Get_Available_Blockchains_Types--#
-API.MemeApi 2023-09-30 19:11:54,459 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:11:54,459 DEBUG [{"id":1,"name":"Cosmos"}]
-API.MemeApi 2023-09-30 19:11:54,462 INFO #--Get_Available_Transaction_Types--#
-API.MemeApi 2023-09-30 19:11:54,623 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:11:54,624 DEBUG [{"id":1,"name":"DELEGATE"},{"id":2,"name":"UNDELEGATE"}]
-API.MemeApi 2023-09-30 19:11:54,627 INFO #--Get_Available_Wallet_Types--#
-API.MemeApi 2023-09-30 19:11:54,781 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:11:54,781 DEBUG [{"id":1,"name":"Trust Wallet"},{"id":2,"name":"Safepal"}]
-API.MemeApi 2023-09-30 19:11:55,350 INFO #--Add_New_User--#
-API.MemeApi 2023-09-30 19:11:55,529 INFO Success, I get 200
-API.MemeApi 2023-09-30 19:11:55,529 DEBUG {"message":"User stats was updated!"}
+API.MemeApi 2023-10-01 00:11:47,683 INFO #--Get_Cache--#
+API.MemeApi 2023-10-01 00:11:47,962 INFO Success, I get 200
+API.MemeApi 2023-10-01 00:11:47,964 DEBUG {"1":{"cosmos1xgeqpr76lxdlf3zh7acpl503cxcalfamf3h2fv":1,"cosmos1e5wc6y6j0gu82z0mj66e8fexlj3jkf988nndgs":2}}
+API.MemeApi 2023-10-01 00:11:47,967 INFO #--Get_Available_Blockchains_Types--#
+API.MemeApi 2023-10-01 00:11:48,134 INFO Success, I get 200
+API.MemeApi 2023-10-01 00:11:48,138 DEBUG [{"id":1,"name":"Cosmos"}]
+API.MemeApi 2023-10-01 00:11:48,142 INFO #--Get_Available_Transaction_Types--#
+API.MemeApi 2023-10-01 00:11:48,311 INFO Success, I get 200
+API.MemeApi 2023-10-01 00:11:48,317 DEBUG [{"id":1,"name":"DELEGATE"},{"id":2,"name":"UNDELEGATE"}]
+API.MemeApi 2023-10-01 00:11:48,321 INFO #--Get_Available_Wallet_Types--#
+API.MemeApi 2023-10-01 00:11:48,494 INFO Success, I get 200
+API.MemeApi 2023-10-01 00:11:48,499 DEBUG [{"id":1,"name":"Trust Wallet"},{"id":2,"name":"Safepal"}]
+API.MemeApi 2023-10-01 00:11:58,058 INFO #--Add_New_User--#
+API.MemeApi 2023-10-01 00:11:58,257 INFO Success, I get 200
+API.MemeApi 2023-10-01 00:11:58,263 DEBUG {"message":"User stats was updated!"}
+API.MemeApi 2023-10-01 00:11:58,732 INFO #--Add_New_User--#
+API.MemeApi 2023-10-01 00:11:58,928 INFO Success, I get 200
+API.MemeApi 2023-10-01 00:11:58,931 DEBUG {"message":"User stats was updated!"}
