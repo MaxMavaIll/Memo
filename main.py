@@ -42,7 +42,6 @@ def main():
                     rest=config_toml['network'][name_network.get('name')]['rest'],
                     rpc=config_toml['network'][name_network.get('name')]['rpc'],
                     valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
-                    address = config_toml['network'][name_network.get('name')]['address']
                 )
                 transactions_type =  memo.Get_Available_Transaction_Types()
                 wallet_type = memo.Get_Available_Wallet_Types()
@@ -71,20 +70,6 @@ def main():
                                                   hash=data_memo_address_time[height][address]['hash']
                                                   )
 
-                # for value in memo.Get_Available_Transaction_Types():
-                    
-                #     for address in cosmos.Get_address(value.get("name")):
-                        
-                #         if address not in dict(cache_users.items()).keys() :
-                #             userId = memo.Add_New_User(address=address, walletType=value.get('id'), blockchain=name_network.get('id'))
-                #             cache_users[value.get('id')][address] = userId
-                #             print(f"{address} is here")
-
-                        
-                #         print(f"{address} not is here")
-                #         userId = memo.Add_New_User(address=address, walletType=value.get('id'), blockchain=name_network.get('id'))
-                        
-                #         print(cache_users, userId)
                 for address in cache_users[id_network]:
 
                     amountReward_user = cosmos.Get_All_Rewards(address)

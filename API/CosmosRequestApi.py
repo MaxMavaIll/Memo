@@ -19,7 +19,6 @@ class CosmosRequestApi():
         self.rest = rest
         self.rpc = rpc
         self.valoper_address = valoper_address
-        self.address = address
         self.tx_hash = []
         self.tx_hash_user = []
         self.executedAt = []
@@ -136,9 +135,6 @@ class CosmosRequestApi():
             log.info("Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
-            # type_transactions = data['messages'][0]['@type']
-
-            # if data['messages'][0]['@type'][-8:].upper() 
             return data['tx']['body'], data
         
         else:
@@ -185,11 +181,6 @@ class CosmosRequestApi():
                     
                     if data['memo'] != wallet_type.get('name'):
                         continue
-                # if data['memo'] not in wallet_types:
-                #     continue
-
-                # if data['validator_address'] != self.valoper_address:
-                #     continue
 
                     
                     amount = int(data['messages'][0]['amount']['amount']) / 1000000
@@ -227,7 +218,6 @@ class CosmosRequestApi():
             settings_json = work_json.get_json()
             height = settings_json['last_height']
             last_height_network = self.get_height()
-            # last_height_network = 18152419
             cache_hashes = {}
             
             
@@ -254,11 +244,8 @@ class CosmosRequestApi():
             self,
             address_user: str
     ) -> int: 
-        # if address_user == '':
-        #     address_user = self.address
         
         answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}")
-        # answer = requests.get(f"{self.rest}/cosmos/staking/v1beta1/delegations/{address_user}")
 
         if answer.status_code == 200:
             log.info("Success, I get 200")
@@ -305,8 +292,3 @@ class CosmosRequestApi():
             log.error(f"Answer with server: {answer.text}")
         
 
-# a = CosmosRequestApi(config_toml["network"]["Cosmos"]["rest"], config_toml["network"]["Cosmos"]["rpc"], config_toml["network"]["Cosmos"]["valoper_address"])
-# a.Get_address()
-# a.Check_memo("cosmos1rf045g5uj00zkwt24hjlcrw89htjzxuuq8t6gm")
-# m = a.Check_Block_Memo(['DELEGATE', 'UNDELEGATE'], ['trast', 'ufir'])
-# print(m)

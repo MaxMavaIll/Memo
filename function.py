@@ -15,7 +15,7 @@ log.addHandler(handler2)
 def to_tmpstmp_mc(
         date_str: str = '2023-09-30T09:26:05Z'
 ) -> int:
-    date_obj = datetime.fromisoformat(date_str[:-1])  # Видаляємо 'Z' на кінці та перетворюємо у datetime
+    date_obj = datetime.fromisoformat(date_str[:-1])  
 
     timestamp_ms = int(date_obj.timestamp() * 1000)
 

@@ -168,5 +168,4 @@ class MemeApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
-# a = MemeApi()
-# a.Add_New_User('sljgksldjglskjfioijoejirjls', 1, 1)
+

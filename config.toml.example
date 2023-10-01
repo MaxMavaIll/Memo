@@ -9,12 +9,6 @@ backup_count = 3
 
 
 [network.Cosmos]
-# rest = 'https://cosmos-api.w3coins.io:443'
-# rpc = 'https://cosmos-rpc.w3coins.io:443'
-# valoper_address = 'cosmosvaloper15w6ra6m68c63t0sv2hzmkngwr9t88e23r8vtg5'
-# time_new_block = 6
-
-rest = 'https://cosmos-testnet-api.w3coins.io:443'
-rpc = 'https://cosmos-testnet-rpc.w3coins.io:443'
-valoper_address = 'cosmosvaloper1uy97y2f8fm7l28tl0mr75pgdaf2rzxsg33zfpq'
-time_new_block = 6
+rest = ''
+rpc = ''
+valoper_address = ''
