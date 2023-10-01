@@ -15,7 +15,7 @@ log.addHandler(handler2)
 class CosmosRequestApi():
     CACHE_HEIGHT = dict()
     
-    def __init__(self, rest: str, rpc: str, valoper_address: str, address: str) -> None:
+    def __init__(self, rest: str, rpc: str, valoper_address: str) -> None:
         self.rest = rest
         self.rpc = rpc
         self.valoper_address = valoper_address
