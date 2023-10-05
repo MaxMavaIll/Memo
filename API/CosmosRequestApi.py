@@ -172,9 +172,11 @@ class CosmosRequestApi():
             
             data, full_data = self.Get_Memo_Address_With_Transaction(hash=hash)
 
-            for transactions_type in transactions_types:
-                if data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper() != transactions_type.get('name') or \
-                    data['messages'][0]['validator_address'] != self.valoper_address:
+            
+            if data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[0].get('name'):
+                # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
+                if data['messages'][0]['validator_address'] != self.valoper_address or \
+                    full_data['tx_response']["code"] != 0:
                     continue
                 
                 for wallet_type in wallet_types:
@@ -183,16 +185,33 @@ class CosmosRequestApi():
                         continue
 
                     
-                    amount = int(data['messages'][0]['amount']['amount']) / 1000000
+                    amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
                     time = full_data['tx_response']['timestamp']
 
 
                     cache_hashes[data['messages'][0]['delegator_address']] = {'memo': wallet_type.get('id'), 
-                                                                'typeId': transactions_type.get('id'), 
+                                                                'typeId': transactions_types[0].get('id'), 
                                                                 'amount': amount,
                                                                 'hash': hash,
                                                                 'time': time
                                                                 }
+                    
+            elif data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[1].get('name'):
+                if data['messages'][0]['validator_address'] != self.valoper_address or \
+                    full_data['tx_response']["code"] != 0:
+                    continue
+
+                amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                time = full_data['tx_response']['timestamp']
+
+
+                cache_hashes[data['messages'][0]['delegator_address']] = {
+                                                            'memo': 1,
+                                                            'typeId': transactions_types[1].get('id'), 
+                                                            'amount': amount,
+                                                            'hash': hash,
+                                                            'time': time
+                                                            }
 
         return cache_hashes
 
@@ -256,7 +275,6 @@ class CosmosRequestApi():
         else:
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
-
 
     def Get_All_Commission(self) -> int:
         answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/validators/{self.valoper_address}/commission")

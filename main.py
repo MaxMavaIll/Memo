@@ -20,18 +20,24 @@ logging.getLogger
 
 
 cache_users = None
+user_delegates = None
+APR = 19
 
 
 def main():
-    global cache_users
+    global cache_users, user_delegates, APR
     data_memo_address_time = {}
 
     memo = MemeApi.MemeApi()
 
     while True:
+        
 
         if cache_users == None:
             cache_users = memo.Get_Cache()
+        
+        if user_delegates == None:
+            user_delegates = memo.Get_Users_Delegated_Amounts()
 
         
 
@@ -43,17 +49,21 @@ def main():
                     rpc=config_toml['network'][name_network.get('name')]['rpc'],
                     valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
                 )
+                # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
                 transactions_type =  memo.Get_Available_Transaction_Types()
                 wallet_type = memo.Get_Available_Wallet_Types()
+
+                if id_network not in cache_users:
+                    cache_users[id_network] = {}
+                
+                if id_network not in user_delegates:
+                    user_delegates[id_network] = {}
 
 
                 data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type)
 
                 for height in data_memo_address_time:
                     for address in data_memo_address_time[height].keys():
-                        
-                        if id_network not in cache_users:
-                                cache_users[id_network] = {}
                                 
                         if address not in cache_users[id_network]:
                             log.info(f"Add new user with: {address}")
@@ -61,31 +71,35 @@ def main():
 
 
                             cache_users[id_network][address] = userId
+                            user_delegates[id_network][address] = 0
+
+                        if data_memo_address_time[height][address]['typeId'] == 1:
+                            user_delegates[id_network][address] +=  float(data_memo_address_time[height][address]['amount'])
+                        elif data_memo_address_time[height][address]['typeId'] == 2:
+                            user_delegates[id_network][address] -=  float(data_memo_address_time[height][address]['amount'])
 
                         userId = cache_users[id_network][address]
                         memo.Add_New_Transactions(userId=userId, 
                                                   typeId=data_memo_address_time[height][address]['typeId'],
-                                                  amount=str(data_memo_address_time[height][address]['amount']),
+                                                  amount=data_memo_address_time[height][address]['amount'],
                                                   executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
                                                   hash=data_memo_address_time[height][address]['hash']
                                                   )
 
                 for address in cache_users[id_network]:
 
-                    amountReward_user = cosmos.Get_All_Rewards(address)
-                    amountReward_validator = cosmos.Get_All_Commission()
-                    amountDelegate = cosmos.Get_Balance_Delegate(address)
-                    log.info(f"All rewarsd: {amountReward_user}, {amountReward_validator}, {amountDelegate}")
+
+                    amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
+                    log.info(f"All rewarsd: {amountReward_user}")
 
                     userId = cache_users[id_network][address]
-                    memo.Update_User_Stats(userId, str(amountDelegate), str(amountReward_user), str(amountReward_validator))
+                    memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
-                log.info(f"wait {config_toml['time_update'] } min")
-                time.sleep(config_toml['time_update'] * 60)
             except:
                 log.exception("ERROR Main")
-                log.info(f"wait {config_toml['time_update'] } min")
-                time.sleep(config_toml['time_update'] * 60)
+            
+            log.info(f"wait {config_toml['time_update'] } min")
+            time.sleep(config_toml['time_update'] * 60)
         
 
 

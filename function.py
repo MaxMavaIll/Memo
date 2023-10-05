@@ -2,6 +2,7 @@ import logging, toml
 
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
+from API import CosmosRequestApi
 
 config_toml = toml.load('config.toml')
 
@@ -21,3 +22,18 @@ def to_tmpstmp_mc(
 
     return timestamp_ms
 
+
+def get_APR_from(
+        amountDelegated: int, 
+        APR: int
+        ) -> str:
+    minute = 365 * 24 * 60
+    hour = 365 * 24
+    reward = f"{amountDelegated * ( APR / 100 ) / minute:.10f}"
+
+    return reward, f"{float(reward) * 0.02:.10f}" # amountDelegated * ( APR / 100 ) / minute
+
+def update_APR(
+        reward_for_minute: int
+):
+    pass

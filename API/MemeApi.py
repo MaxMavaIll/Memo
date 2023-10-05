@@ -140,16 +140,14 @@ class MemeApi():
     def Update_User_Stats(
             self, 
             userId: int, 
-            amountDelegated: str, 
-            amountRewards: str,
+            amountUserRewards: str,
             amountValidatorRewards: str
             ):
-        log.info("#--Add_New_User--#")
+        log.info("#--Update--#")
 
         payload = json.dumps({
         "userId": userId,
-        "amountDelegated": amountDelegated,
-        "amountRewards": amountRewards,
+        "amountUserRewards": amountUserRewards,
         "amountValidatorRewards": amountValidatorRewards
         })
 
@@ -157,7 +155,7 @@ class MemeApi():
         'Content-Type': 'application/json'
         }
 
-        answer = requests.request("PATCH", f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload)
+        answer = requests.patch(f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload)
 
 
         if answer.status_code == 200:
@@ -168,4 +166,23 @@ class MemeApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
+    def Get_Users_Delegated_Amounts(
+            self
+            ):
+        log.info("#--Get_Users_Delegated_Amounts--#")
+
+
+
+
+        answer = requests.get(f"{self.HOSTNAME}/api/users/delegated-amounts")
+
+
+        if answer.status_code == 200:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+            return json.loads(answer.text)
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
 
