@@ -1,11 +1,14 @@
 import logging, toml, time
 
 from logging.handlers import RotatingFileHandler
-from API import MemeApi, CosmosRequestApi
 from function import * 
+from API import MemeApi, CosmosRequestApi
+from WorkJson import WorkWithJson
 
 
 config_toml = toml.load('config.toml')
+work_json = WorkWithJson('settings.json')
+
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -16,22 +19,19 @@ log.addHandler(handler2)
 
 
 logging.basicConfig(level=logging.INFO, format="%(name)s %(asctime)s %(levelname)s %(message)s")
-logging.getLogger
 
 
 cache_users = None
 user_delegates = None
-APR = 19
 
 
 def main():
-    global cache_users, user_delegates, APR
-    data_memo_address_time = {}
-
+    global cache_users, user_delegates
     memo = MemeApi.MemeApi()
 
     while True:
-        
+        data = work_json.get_json()
+        APR = data['APR']
 
         if cache_users == None:
             cache_users = memo.Get_Cache()
@@ -97,9 +97,10 @@ def main():
 
             except:
                 log.exception("ERROR Main")
-            
-            log.info(f"wait {config_toml['time_update'] } min")
-            time.sleep(config_toml['time_update'] * 60)
+        
+        log.info(f"APR: {APR}")
+        log.info(f"wait {config_toml['time_update'] } min")
+        time.sleep(config_toml['time_update'] * 60)
         
 
 

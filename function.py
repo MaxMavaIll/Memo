@@ -25,13 +25,13 @@ def to_tmpstmp_mc(
 
 def get_APR_from(
         amountDelegated: int, 
-        APR: int
+        APR: float
         ) -> str:
     minute = 365 * 24 * 60
     hour = 365 * 24
     reward = f"{amountDelegated * ( APR / 100 ) / minute:.10f}"
 
-    return reward, f"{float(reward) * 0.02:.10f}" # amountDelegated * ( APR / 100 ) / minute
+    return f"{float(reward) - float(reward) * 0.02:.10f}", f"{float(reward) * 0.02:.10f}" # amountDelegated * ( APR / 100 ) / minute
 
 def update_APR(
         reward_for_minute: int
