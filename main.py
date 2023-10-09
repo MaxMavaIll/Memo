@@ -30,6 +30,8 @@ def main():
     memo = MemeApi.MemeApi()
 
     while True:
+        log.info("Start")
+        star_time = time.time()
         data = work_json.get_json()
         APR = data['APR']
 
@@ -75,9 +77,11 @@ def main():
 
                         if data_memo_address_time[height][address]['typeId'] == 1:
                             user_delegates[id_network][address] +=  float(data_memo_address_time[height][address]['amount'])
-                        elif data_memo_address_time[height][address]['typeId'] == 2:
+                        elif data_memo_address_time[height][address]['typeId'] == 2 and user_delegates[id_network][address] >= float(data_memo_address_time[height][address]['amount']):
                             user_delegates[id_network][address] -=  float(data_memo_address_time[height][address]['amount'])
-
+                        else:
+                            user_delegates[id_network][address] = 0
+                            
                         userId = cache_users[id_network][address]
                         memo.Add_New_Transactions(userId=userId, 
                                                   typeId=data_memo_address_time[height][address]['typeId'],
@@ -90,7 +94,7 @@ def main():
 
 
                     amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
-                    log.info(f"All rewarsd: {amountReward_user}")
+                    log.info(f"Address {address} | All rewarsd user: {amountReward_user} + commision {amountReward_Validator}")
 
                     userId = cache_users[id_network][address]
                     memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
@@ -99,6 +103,7 @@ def main():
                 log.exception("ERROR Main")
         
         log.info(f"APR: {APR}")
+        log.info(f"Time work: {time.time() - star_time:.4f}")
         log.info(f"wait {config_toml['time_update'] } min")
         time.sleep(config_toml['time_update'] * 60)
         

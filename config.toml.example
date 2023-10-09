@@ -7,6 +7,12 @@ level = "logging.DEBUG"
 max_log_size = 5
 backup_count = 3
 
+[Update]
+enable_chromeDriver = true
+url_driver = "http://localhost:4444"
+# Час вимірюється у годинах 1 = 1 hour
+time = 1 
+
 
 [network.Cosmos]
 rest = ''
