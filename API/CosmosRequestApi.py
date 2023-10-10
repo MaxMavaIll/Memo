@@ -162,7 +162,8 @@ class CosmosRequestApi():
             self,
             height: int,
             transactions_types: dict,
-            wallet_types: dict
+            wallet_types: dict,
+            address_user: dict
     ) -> dict:
         
         cache_hashes = {}
@@ -175,7 +176,7 @@ class CosmosRequestApi():
             
             if data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[0].get('name'):
                 # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
-                if data['messages'][0]['validator_address'] != self.valoper_address or \
+                if data['messages'][0]['delegator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0:
                     continue
                 
@@ -198,7 +199,8 @@ class CosmosRequestApi():
                     
             elif data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[1].get('name'):
                 if data['messages'][0]['validator_address'] != self.valoper_address or \
-                    full_data['tx_response']["code"] != 0:
+                    full_data['tx_response']["code"] != 0 or \
+                    data['messages'][0]['validator_address'] not in address_user:
                     continue
 
                 amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
@@ -231,7 +233,8 @@ class CosmosRequestApi():
     def Get_Block_Memo(
             self,
             transactions_type: dict,
-            wallet_type: dict
+            wallet_type: dict,
+            address_user: dict
     ) -> dict:
         try:
             settings_json = work_json.get_json()
@@ -247,7 +250,7 @@ class CosmosRequestApi():
             for tmp_height in range(height, last_height_network):
                 
                 log.info(f"\n\nHeight: {tmp_height} - {last_height_network}\n")
-                memo = self.Get_Memo(tmp_height, transactions_types=transactions_type, wallet_types=wallet_type)
+                memo = self.Get_Memo(tmp_height, transactions_types=transactions_type, wallet_types=wallet_type, address_user=address_user)
                 if memo != {}:
                     cache_hashes[tmp_height] = memo
 

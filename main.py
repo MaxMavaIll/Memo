@@ -62,7 +62,7 @@ def main():
                     user_delegates[id_network] = {}
 
 
-                data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type)
+                data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network])
 
                 for height in data_memo_address_time:
                     for address in data_memo_address_time[height].keys():
