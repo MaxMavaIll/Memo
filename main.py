@@ -81,7 +81,7 @@ def main():
                             user_delegates[id_network][address] -=  float(data_memo_address_time[height][address]['amount'])
                         else:
                             user_delegates[id_network][address] = 0
-                            
+
                         userId = cache_users[id_network][address]
                         memo.Add_New_Transactions(userId=userId, 
                                                   typeId=data_memo_address_time[height][address]['typeId'],
@@ -92,6 +92,8 @@ def main():
 
                 for address in cache_users[id_network]:
 
+                    if user_delegates[id_network][address] == 0:
+                        continue
 
                     amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
                     log.info(f"Address {address} | All rewarsd user: {amountReward_user} + commision {amountReward_Validator}")
