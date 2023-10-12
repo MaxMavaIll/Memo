@@ -140,6 +140,7 @@ class CosmosRequestApi():
         else:
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
+            return {}, {}
   
     def Get_Hash_Transactions_Height(
             self,
@@ -173,10 +174,14 @@ class CosmosRequestApi():
             
             data, full_data = self.Get_Memo_Address_With_Transaction(hash=hash)
 
+            if full_data == []:
+                log.warn(f"Пропуск блоку хеша: {hash}")
+                continue
+
             
             if data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[0].get('name'):
                 # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
-                if data['messages'][0]['delegator_address'] != self.valoper_address or \
+                if data['messages'][0]['validator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0:
                     continue
                 
@@ -200,7 +205,7 @@ class CosmosRequestApi():
             elif data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[1].get('name'):
                 if data['messages'][0]['validator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0 or \
-                    data['messages'][0]['validator_address'] not in address_user:
+                    data['messages'][0]['delegator_address'] not in address_user:
                     continue
 
                 amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
