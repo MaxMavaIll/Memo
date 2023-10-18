@@ -15,6 +15,41 @@ class MemeApi():
 
     HOSTNAME = "https://memo.w3coins.io"
 
+    def Get_Cache(self) -> list(dict()):
+        log.info("#--Get_Cache--#")
+
+        answer = requests.get(f"{self.HOSTNAME}/api/users/cache")
+
+        if answer.status_code == 200:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+            return json.loads(answer.text)
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
+
+    def Get_Users_Delegated_Amounts(
+            self
+            ) -> list(dict()):
+        log.info("#--Get_Users_Delegated_Amounts--#")
+
+
+
+
+        answer = requests.get(f"{self.HOSTNAME}/api/users/delegated-amounts")
+
+
+        if answer.status_code == 200:
+            log.info("Success, I get 200")
+            log.debug(answer.text)
+            return json.loads(answer.text)
+        
+        else:
+            log.error(f"Fail, I get {answer.status_code}")
+            log.error(f"Answer with server: {answer.text}")
+
+
     def Get_Available_Wallet_Types(self) -> list(dict()):
         log.info("#--Get_Available_Wallet_Types--#")
         answer = requests.get(f"{self.HOSTNAME}/api/wallets/types")
@@ -56,20 +91,19 @@ class MemeApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
-
-    def Get_Cache(self) -> list(dict()):
-        log.info("#--Get_Cache--#")
-
-        answer = requests.get(f"{self.HOSTNAME}/api/users/cache")
+    def Get_Available_Blockchains_Symbols(self) -> list:
+        log.info("#--Get_Available_Blockchains_Symbols--#")
+        answer = requests.get(f"{self.HOSTNAME}/api/blockchains/symbols")
 
         if answer.status_code == 200:
             log.info("Success, I get 200")
             log.debug(answer.text)
-            return json.loads(answer.text)
+            # return json.loads(answer.text)
+            return ['atom']
         
         else:
             log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"Answer with server: {answer.text}")      
 
     def Add_New_User(
             self, 
@@ -103,7 +137,6 @@ class MemeApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
-
     def Add_New_Transactions(
             self, 
             userId: int, 
@@ -136,7 +169,6 @@ class MemeApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
-
     def Update_User_Stats(
             self, 
             userId: int, 
@@ -166,23 +198,4 @@ class MemeApi():
             log.error(f"Fail, I get {answer.status_code}")
             log.error(f"Answer with server: {answer.text}")
 
-    def Get_Users_Delegated_Amounts(
-            self
-            ):
-        log.info("#--Get_Users_Delegated_Amounts--#")
-
-
-
-
-        answer = requests.get(f"{self.HOSTNAME}/api/users/delegated-amounts")
-
-
-        if answer.status_code == 200:
-            log.info("Success, I get 200")
-            log.debug(answer.text)
-            return json.loads(answer.text)
-        
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
-
+    

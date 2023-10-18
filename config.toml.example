@@ -3,7 +3,6 @@
 time_update = 1 
 
 [logging]
-level = "logging.DEBUG"
 max_log_size = 5
 backup_count = 3
 

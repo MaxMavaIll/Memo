@@ -7,7 +7,7 @@ work_json = WorkWithJson('settings.json')
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-handler2 = RotatingFileHandler(f"logs/CosmosRequest/{__name__}.log",maxBytes=config_toml['logging']['max_log_size'] * 1024 * 1024, backupCount=config_toml['logging']['backup_count'])
+handler2 = RotatingFileHandler(f"logs/Meme/{__name__}.log",maxBytes=config_toml['logging']['max_log_size'] * 1024 * 1024, backupCount=config_toml['logging']['backup_count'])
 formatter2 = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
 handler2.setFormatter(formatter2)
 log.addHandler(handler2)
@@ -104,7 +104,6 @@ class CosmosRequestApi():
 
         return tx_hash
         
-
     def Check_memo(
             self,
             address: str
@@ -123,7 +122,6 @@ class CosmosRequestApi():
             else:
                 log.error(f"Fail, I get {answer.status_code}")
                 log.error(f"Answer with server: {answer.text}")
-
     
     def Get_Memo_Address_With_Transaction(
             self,
@@ -179,7 +177,7 @@ class CosmosRequestApi():
                 continue
 
             
-            if data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[0].get('name'):
+            if data['messages'][0]['@type'].split(".")[-1].upper() == "MSGGELEGATE":
                 # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
                 if data['messages'][0]['validator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0:
@@ -202,7 +200,7 @@ class CosmosRequestApi():
                                                                 'time': time
                                                                 }
                     
-            elif data['messages'][0]['@type'].split(".")[-1].upper() == "MSG" + transactions_types[1].get('name'):
+            elif data['messages'][0]['@type'].split(".")[-1].upper() in ["MSGGELEGATE", "MSGREGELEGATE"]:
                 if data['messages'][0]['validator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0 or \
                     data['messages'][0]['delegator_address'] not in address_user:
@@ -267,54 +265,81 @@ class CosmosRequestApi():
             log.exception("Error Cosmos API")
             return {}
 
-    def Get_All_Rewards(
-            self,
-            address_user: str
-    ) -> int: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def Get_All_Rewards(
+    #         self,
+    #         address_user: str
+    # ) -> int: 
         
-        answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}")
+    #     answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}")
 
-        if answer.status_code == 200:
-            log.info("Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
-            return float(data['rewards'][-1]['amount']) / 1000000
+    #     if answer.status_code == 200:
+    #         log.info("Success, I get 200")
+    #         log.debug(answer.text)
+    #         data = json.loads(answer.text)
+    #         return float(data['rewards'][-1]['amount']) / 1000000
         
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+    #     else:
+    #         log.error(f"Fail, I get {answer.status_code}")
+    #         log.error(f"Answer with server: {answer.text}")
 
-    def Get_All_Commission(self) -> int:
-        answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/validators/{self.valoper_address}/commission")
+    # def Get_All_Commission(self) -> int:
+    #     answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/validators/{self.valoper_address}/commission")
 
-        if answer.status_code == 200:
-            log.info("Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
+    #     if answer.status_code == 200:
+    #         log.info("Success, I get 200")
+    #         log.debug(answer.text)
+    #         data = json.loads(answer.text)
             
-            return float(data['commission']['commission'][-1]['amount']) / 1000000
+    #         return float(data['commission']['commission'][-1]['amount']) / 1000000
         
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+    #     else:
+    #         log.error(f"Fail, I get {answer.status_code}")
+    #         log.error(f"Answer with server: {answer.text}")
 
-    def Get_Balance_Delegate(
-            self,
-            address_user: str
-    ): 
+    # def Get_Balance_Delegate(
+    #         self,
+    #         address_user: str
+    # ): 
         
-        answer = requests.get(f"{self.rest}/cosmos/staking/v1beta1/delegations/{address_user}")
+    #     answer = requests.get(f"{self.rest}/cosmos/staking/v1beta1/delegations/{address_user}")
 
-        if answer.status_code == 200:
-            log.info("Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
-            for tmp in data['delegation_responses']:
-                if tmp['delegation']['validator_address'] == self.valoper_address:
-                    return float(tmp['balance']['amount']) / 1000000
+    #     if answer.status_code == 200:
+    #         log.info("Success, I get 200")
+    #         log.debug(answer.text)
+    #         data = json.loads(answer.text)
+    #         for tmp in data['delegation_responses']:
+    #             if tmp['delegation']['validator_address'] == self.valoper_address:
+    #                 return float(tmp['balance']['amount']) / 1000000
         
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+    #     else:
+    #         log.error(f"Fail, I get {answer.status_code}")
+    #         log.error(f"Answer with server: {answer.text}")
         
 
