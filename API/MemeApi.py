@@ -11,7 +11,7 @@ log_s.setLevel(logging.INFO)
 formatter2 = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
 log_s.setFormatter(formatter2)
 
-log_f = RotatingFileHandler(f"logs/Update/Update.log",maxBytes=config_toml['logging']['max_log_size'] * 1024 * 1024, backupCount=config_toml['logging']['backup_count'])
+log_f = RotatingFileHandler(f"logs/Meme/{__name__}.log",maxBytes=config_toml['logging']['max_log_size'] * 1024 * 1024, backupCount=config_toml['logging']['backup_count'])
 log_f.setLevel(logging.DEBUG)
 formatter2 = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
 log_f.setFormatter(formatter2)
@@ -89,7 +89,7 @@ class MemeApi():
 
     def Get_Available_Blockchains_Types(self) -> list:
         log.info("#--Get_Available_Blockchains_Types--#")
-        answer = requests.get(f"{self.HOSTNAME}/api/blockchains/types")
+        answer = requests.get(f"{self.HOSTNAME}/api/blockchains")
 
         if answer.status_code == 200:
             log.info("Success, I get 200")
