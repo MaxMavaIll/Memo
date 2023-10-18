@@ -205,3 +205,22 @@ __main__ 2023-10-18 11:35:42,885 INFO Get token: ATOM, price: 6.42
 __main__ 2023-10-18 11:35:42,903 INFO Get price token: {'atom': 6.42}
 __main__ 2023-10-18 11:35:43,112 INFO Time work 229.2446484565735 sec
 __main__ 2023-10-18 11:35:43,122 INFO Wait 7 hour
+__main__ 2023-10-18 12:15:12,172 INFO Start APR monitoring
+__main__ 2023-10-18 12:15:17,820 INFO APR : 19.03
+API.MemeApi 2023-10-18 12:15:17,838 INFO #--Get_Available_Blockchains_Symbols--#
+API.MemeApi 2023-10-18 12:15:18,043 INFO Success, I get 200
+API.MemeApi 2023-10-18 12:15:18,052 DEBUG []
+__main__ 2023-10-18 12:15:18,067 INFO Data == {}
+__main__ 2023-10-18 12:15:18,434 INFO Wait 2 sec
+__main__ 2023-10-18 12:15:27,048 INFO Add ATOM with url https://wallet.keplr.app/chains/cosmos-hub
+__main__ 2023-10-18 12:15:27,085 DEBUG Data network_price: {'ATOM': {'url': 'https://wallet.keplr.app/chains/cosmos-hub'}}
+__main__ 2023-10-18 12:15:33,245 INFO Add OSMO with url https://wallet.keplr.app/chains/osmosis
+__main__ 2023-10-18 12:15:33,300 DEBUG Data network_price: {'ATOM': {'url': 'https://wallet.keplr.app/chains/cosmos-hub'}, 'OSMO': {'url': 'https://wallet.keplr.app/chains/osmosis'}}
+__main__ 2023-10-18 12:15:39,248 INFO Add BLD with url https://wallet.keplr.app/chains/agoric
+__main__ 2023-10-18 12:15:39,285 DEBUG Data network_price: {'ATOM': {'url': 'https://wallet.keplr.app/chains/cosmos-hub'}, 'OSMO': {'url': 'https://wallet.keplr.app/chains/osmosis'}, 'BLD': {'url': 'https://wallet.keplr.app/chains/agoric'}}
+__main__ 2023-10-18 12:15:45,337 INFO Add AKT with url https://wallet.keplr.app/chains/akash
+__main__ 2023-10-18 12:15:45,353 DEBUG Data network_price: {'ATOM': {'url': 'https://wallet.keplr.app/chains/cosmos-hub'}, 'OSMO': {'url': 'https://wallet.keplr.app/chains/osmosis'}, 'BLD': {'url': 'https://wallet.keplr.app/chains/agoric'}, 'AKT': {'url': 'https://wallet.keplr.app/chains/akash'}}
+__main__ 2023-10-18 12:15:51,363 INFO Add AXL with url https://wallet.keplr.app/chains/axelar
+__main__ 2023-10-18 12:15:51,382 DEBUG Data network_price: {'ATOM': {'url': 'https://wallet.keplr.app/chains/cosmos-hub'}, 'OSMO': {'url': 'https://wallet.keplr.app/chains/osmosis'}, 'BLD': {'url': 'https://wallet.keplr.app/chains/agoric'}, 'AKT': {'url': 'https://wallet.keplr.app/chains/akash'}, 'AXL': {'url': 'https://wallet.keplr.app/chains/axelar'}}
+__main__ 2023-10-18 12:16:03,307 INFO Add CRO with url https://wallet.keplr.app/chains/cronos-pos
+__main__ 2023-10-18 12:16:03,344 DEBUG Data network_price: {'ATOM': {'url': 'https://wallet.keplr.app/chains/cosmos-hub'}, 'OSMO': {'url': 'https://wallet.keplr.app/chains/osmosis'}, 'BLD': {'url': 'https://wallet.keplr.app/chains/agoric'}, 'AKT': {'url': 'https://wallet.keplr.app/chains/akash'}, 'AXL': {'url': 'https://wallet.keplr.app/chains/axelar'}, 'CRO': {'url': 'https://wallet.keplr.app/chains/cronos-pos'}}

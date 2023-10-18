@@ -28,7 +28,6 @@ log_f.setLevel(logging.DEBUG)
 formatter2 = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
 log_f.setFormatter(formatter2)
 
-
 log.addHandler(log_s)
 log.addHandler(log_f)
 

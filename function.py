@@ -8,10 +8,21 @@ config_toml = toml.load('config.toml')
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-handler2 = RotatingFileHandler(f"logs/{__name__}.log",maxBytes=config_toml['logging']['max_log_size'] * 1024 * 1024, backupCount=config_toml['logging']['backup_count'])
+
+log_s = logging.StreamHandler()
+log_s.setLevel(logging.INFO)
 formatter2 = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
-handler2.setFormatter(formatter2)
-log.addHandler(handler2)
+log_s.setFormatter(formatter2)
+
+log_f = RotatingFileHandler(f"logs/Update/Update.log",maxBytes=config_toml['logging']['max_log_size'] * 1024 * 1024, backupCount=config_toml['logging']['backup_count'])
+log_f.setLevel(logging.DEBUG)
+formatter2 = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
+log_f.setFormatter(formatter2)
+
+log.addHandler(log_s)
+log.addHandler(log_f)
+
+
 
 def to_tmpstmp_mc(
         date_str: str = '2023-09-30T09:26:05Z'

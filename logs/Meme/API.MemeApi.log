@@ -9,3 +9,12 @@ API.MemeApi 2023-10-18 11:10:15,662 INFO Success, I get 200
 API.MemeApi 2023-10-18 11:10:15,663 DEBUG []
 API.MemeApi 2023-10-18 11:11:07,778 INFO #--Get_Available_Blockchains_Symbols--#
 API.MemeApi 2023-10-18 11:11:19,399 INFO Success, I get 200
+API.MemeApi 2023-10-18 12:15:12,135 INFO #--Get_Cache--#
+API.MemeApi 2023-10-18 12:15:12,451 INFO Success, I get 200
+API.MemeApi 2023-10-18 12:15:12,455 DEBUG {}
+API.MemeApi 2023-10-18 12:15:12,459 INFO #--Get_Users_Delegated_Amounts--#
+API.MemeApi 2023-10-18 12:15:12,655 INFO Success, I get 200
+API.MemeApi 2023-10-18 12:15:12,661 DEBUG {}
+API.MemeApi 2023-10-18 12:15:12,666 INFO #--Get_Available_Blockchains_Types--#
+API.MemeApi 2023-10-18 12:15:12,816 INFO Success, I get 200
+API.MemeApi 2023-10-18 12:15:12,819 DEBUG <!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#38A1FF"/><meta name="description" content="The admin panel for controls and analyze the specific blockchain data"><title>MEMO</title><script defer="defer" src="/static/js/main.55824019.js"></script><link href="/static/css/main.4a381194.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app</noscript><div id="root"></div></body></html>
