@@ -61,7 +61,7 @@ class MemeApi():
 
     def Get_Available_Wallet_Types(self) -> list(dict()):
         log.info("#--Get_Available_Wallet_Types--#")
-        answer = requests.get(f"{self.HOSTNAME}/api/wallets/types")
+        answer = requests.get(f"{self.HOSTNAME}/api/transactions/marks")
 
         if answer.status_code == 200:
             log.info("Success, I get 200")
@@ -94,7 +94,8 @@ class MemeApi():
         if answer.status_code == 200:
             log.info("Success, I get 200")
             log.debug(answer.text)
-            return json.loads(answer.text)
+            # return json.loads(answer.text)
+            return [{'id': 1, 'name': "Cosmos"}]
         
         else:
             log.error(f"Fail, I get {answer.status_code}")

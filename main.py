@@ -32,8 +32,11 @@ log.addHandler(log_f)
 cache_users = None
 user_delegates = None
 
-async def process_network(name_network):
+async def process_network(name_network: dict):
     global memo
+    data = work_json.get_json()
+
+
     try: 
         id_network = str(name_network.get('id'))
         cosmos = CosmosRequestApi.CosmosRequestApi(
@@ -79,9 +82,9 @@ async def process_network(name_network):
         for address in cache_users[id_network]:
             if user_delegates[id_network][address] == 0:
                 continue
-
-            amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
-            log.info(f"Address {address} | All rewards user: {amountReward_user} + commission {amountReward_Validator}")
+            
+            amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], data["APR"][name_network.get('name')])
+            log.info(f"{name_network.get('name')} | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
 
             userId = cache_users[id_network][address]
             memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
@@ -97,8 +100,6 @@ async def main():
     while True:
         log.info("Start")
         star_time = time.time()
-        data = work_json.get_json()
-        APR = data['APR']
 
         if cache_users == None:
             cache_users = memo.Get_Cache()
@@ -172,7 +173,6 @@ async def main():
         #     except:
         #         log.exception("ERROR Main")
         
-        log.info(f"APR: {APR}")
         log.info(f"Time work: {time.time() - star_time:.4f}")
         log.info(f"wait {config_toml['time_update'] } min")
         time.sleep(config_toml['time_update'] * 60)
@@ -182,4 +182,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
