@@ -1,4 +1,4 @@
-import logging, toml, time
+import logging, toml, time, asyncio
 
 from logging.handlers import RotatingFileHandler
 from function import * 
@@ -8,7 +8,7 @@ from WorkJson import WorkWithJson
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
-
+memo = MemeApi.MemeApi()
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -32,10 +32,67 @@ log.addHandler(log_f)
 cache_users = None
 user_delegates = None
 
+async def process_network(name_network):
+    global memo
+    try: 
+        id_network = str(name_network.get('id'))
+        cosmos = CosmosRequestApi.CosmosRequestApi(
+            rest=config_toml['network'][name_network.get('name')]['rest'],
+            rpc=config_toml['network'][name_network.get('name')]['rpc'],
+            valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
+        )
+        # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
+        transactions_type = memo.Get_Available_Transaction_Types()
+        wallet_type = memo.Get_Available_Wallet_Types()
 
-def main():
-    global cache_users, user_delegates
-    memo = MemeApi.MemeApi()
+        if id_network not in cache_users:
+            cache_users[id_network] = {}
+
+        if id_network not in user_delegates:
+            user_delegates[id_network] = {}
+
+        data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network])
+
+        for height in data_memo_address_time:
+            for address in data_memo_address_time[height].keys():
+                if address not in cache_users[id_network]:
+                    log.info(f"Add new user with: {address}")
+                    userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
+                    cache_users[id_network][address] = userId
+                    user_delegates[id_network][address] = 0
+
+                if data_memo_address_time[height][address]['typeId'] == 1:
+                    user_delegates[id_network][address] += float(data_memo_address_time[height][address]['amount'])
+                elif data_memo_address_time[height][address]['typeId'] == 2 and user_delegates[id_network][address] >= float(data_memo_address_time[height][address]['amount']):
+                    user_delegates[id_network][address] -= float(data_memo_address_time[height][address]['amount'])
+                else:
+                    user_delegates[id_network][address] = 0
+
+                userId = cache_users[id_network][address]
+                memo.Add_New_Transactions(userId=userId, 
+                                          typeId=data_memo_address_time[height][address]['typeId'],
+                                          amount=data_memo_address_time[height][address]['amount'],
+                                          executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
+                                          hash=data_memo_address_time[height][address]['hash']
+                                          )
+
+        for address in cache_users[id_network]:
+            if user_delegates[id_network][address] == 0:
+                continue
+
+            amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
+            log.info(f"Address {address} | All rewards user: {amountReward_user} + commission {amountReward_Validator}")
+
+            userId = cache_users[id_network][address]
+            memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+
+    except:
+        log.exception("ERROR Main")
+
+
+async def main():
+    global cache_users, user_delegates, memo
+    
 
     while True:
         log.info("Start")
@@ -49,68 +106,71 @@ def main():
         if user_delegates == None:
             user_delegates = memo.Get_Users_Delegated_Amounts()
 
+
+        tasks = [process_network(name_network) for name_network in memo.Get_Available_Blockchains_Types()]
+        await asyncio.gather(*tasks)
         
 
-        for name_network in memo.Get_Available_Blockchains_Types():
-            try: 
-                id_network = str(name_network.get('id'))
-                cosmos = CosmosRequestApi.CosmosRequestApi(
-                    rest=config_toml['network'][name_network.get('name')]['rest'],
-                    rpc=config_toml['network'][name_network.get('name')]['rpc'],
-                    valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
-                )
-                # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
-                transactions_type =  memo.Get_Available_Transaction_Types()
-                wallet_type = memo.Get_Available_Wallet_Types()
+        # for name_network in memo.Get_Available_Blockchains_Types():
+        #     try: 
+        #         id_network = str(name_network.get('id'))
+        #         cosmos = CosmosRequestApi.CosmosRequestApi(
+        #             rest=config_toml['network'][name_network.get('name')]['rest'],
+        #             rpc=config_toml['network'][name_network.get('name')]['rpc'],
+        #             valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
+        #         )
+        #         # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
+        #         transactions_type =  memo.Get_Available_Transaction_Types()
+        #         wallet_type = memo.Get_Available_Wallet_Types()
 
-                if id_network not in cache_users:
-                    cache_users[id_network] = {}
+        #         if id_network not in cache_users:
+        #             cache_users[id_network] = {}
                 
-                if id_network not in user_delegates:
-                    user_delegates[id_network] = {}
+        #         if id_network not in user_delegates:
+        #             user_delegates[id_network] = {}
 
 
-                data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network])
+        #         data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network])
 
-                for height in data_memo_address_time:
-                    for address in data_memo_address_time[height].keys():
+        #         for height in data_memo_address_time:
+        #             for address in data_memo_address_time[height].keys():
                                 
-                        if address not in cache_users[id_network]:
-                            log.info(f"Add new user with: {address}")
-                            userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
+        #                 if address not in cache_users[id_network]:
+        #                     log.info(f"Add new user with: {address}")
+        #                     userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
 
 
-                            cache_users[id_network][address] = userId
-                            user_delegates[id_network][address] = 0
+        #                     cache_users[id_network][address] = userId
+        #                     user_delegates[id_network][address] = 0
 
-                        if data_memo_address_time[height][address]['typeId'] == 1:
-                            user_delegates[id_network][address] +=  float(data_memo_address_time[height][address]['amount'])
-                        elif data_memo_address_time[height][address]['typeId'] == 2 and user_delegates[id_network][address] >= float(data_memo_address_time[height][address]['amount']):
-                            user_delegates[id_network][address] -=  float(data_memo_address_time[height][address]['amount'])
-                        else:
-                            user_delegates[id_network][address] = 0
+        #                 if data_memo_address_time[height][address]['typeId'] == 1:
+        #                     user_delegates[id_network][address] +=  float(data_memo_address_time[height][address]['amount'])
+        #                 elif data_memo_address_time[height][address]['typeId'] == 2 and user_delegates[id_network][address] >= float(data_memo_address_time[height][address]['amount']):
+        #                     user_delegates[id_network][address] -=  float(data_memo_address_time[height][address]['amount'])
+        #                 else:
+        #                     user_delegates[id_network][address] = 0
 
-                        userId = cache_users[id_network][address]
-                        memo.Add_New_Transactions(userId=userId, 
-                                                  typeId=data_memo_address_time[height][address]['typeId'],
-                                                  amount=data_memo_address_time[height][address]['amount'],
-                                                  executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
-                                                  hash=data_memo_address_time[height][address]['hash']
-                                                  )
+        #                 userId = cache_users[id_network][address]
+        #                 memo.Add_New_Transactions(userId=userId, 
+        #                                           typeId=data_memo_address_time[height][address]['typeId'],
+        #                                           amount=data_memo_address_time[height][address]['amount'],
+        #                                           executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
+        #                                           hash=data_memo_address_time[height][address]['hash']
+        #                                           )
 
-                for address in cache_users[id_network]:
+        #         for address in cache_users[id_network]:
 
-                    if user_delegates[id_network][address] == 0:
-                        continue
+        #             if user_delegates[id_network][address] == 0:
+        #                 continue
 
-                    amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
-                    log.info(f"Address {address} | All rewarsd user: {amountReward_user} + commision {amountReward_Validator}")
+        #             amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], APR)
+        #             log.info(f"Address {address} | All rewarsd user: {amountReward_user} + commision {amountReward_Validator}")
 
-                    userId = cache_users[id_network][address]
-                    memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+        #             userId = cache_users[id_network][address]
+        #             memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
-            except:
-                log.exception("ERROR Main")
+        #     except:
+        #         log.exception("ERROR Main")
         
         log.info(f"APR: {APR}")
         log.info(f"Time work: {time.time() - star_time:.4f}")

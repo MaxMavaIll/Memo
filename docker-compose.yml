@@ -1,27 +1,27 @@
 version: '3.8'
 
 services:
-  memo:
-    image: server_memo
-    build:
-      context: . 
-      dockerfile: Dockerfile
-    container_name: memo_monitoring
-    volumes:
-      - ./logs:/app/logs
-      - ./config.toml:/app/config.toml
-      - ./settings.json:/app/settings.json
-    command: ["python", "main.py"]
-
-  # apr:
-  #   image: server_apr
+  # memo:
+  #   image: server_memo
   #   build:
   #     context: . 
-  #     dockerfile: ./Update/Dockerfile
-  #   container_name: apr_monitoring
+  #     dockerfile: Dockerfile
+  #   container_name: memo_monitoring
   #   volumes:
-  #     - ./logs:/app/logs/
+  #     - ./logs:/app/logs
   #     - ./config.toml:/app/config.toml
   #     - ./settings.json:/app/settings.json
-  #     - ./Update/network_price.json:/app/network_price.json
-  #   command: ["python", "update_elements.py"]
+  #   command: ["python", "main.py"]
+
+  apr:
+    image: server_apr
+    build:
+      context: . 
+      dockerfile: ./Update/Dockerfile
+    container_name: apr_monitoring
+    volumes:
+      - ./logs:/app/logs/
+      - ./config.toml:/app/config.toml
+      - ./settings.json:/app/settings.json
+      - ./Update/network_price.json:/app/network_price.json
+    command: ["python", "update_elements.py"]
