@@ -13,7 +13,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
-urls_kepler_json = WorkWithJson('network_price.json')
+urls_kepler_json = WorkWithJson('Update/network_price.json')
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -80,8 +80,6 @@ def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, s
         log.debug(f"Data network_price: {data}")
         urls_kepler_json.set_json(data)
         
-            
-    
 
     # for symb_save, conf in data.items():
 
@@ -104,10 +102,28 @@ def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, s
             if '<' in token or not price.replace('.', '', 1).isdigit():
                 break
 
-            resul[symb] = float(price)
+            resul[symb] = price
 
-        if symb not in resul:
-            resul[symb] = 0
+        if symb == 'band':
+            path_price = "/html/body/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[1]/div/section/div/div/div[3]/div/div[1]/div/div/div[1]/div[1]/div/div/div/div/div/div[2]/div"
+            driver.get("https://www.mintscan.io/band")
+            log.info(f"Wait 5")
+            time.sleep(5)
+            price = driver.find_element(By.XPATH, path_price)
+            log.info(f"Get token: {symb}, price: {price.text.strip('$ ')}")
+
+            resul[symb] = price.text.strip("$ ")
+
+        if symb == 'arch':
+            path_price = "/html/body/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[1]/div/section/div/div/div[3]/div/div[1]/div/div/div[1]/div[1]/div/div/div/div/div/div[2]/div"
+            driver.get("https://www.mintscan.io/archway")
+            log.info(f"Wait 5")
+            time.sleep(5)
+            price = driver.find_element(By.XPATH, path_price)
+            log.info(f"Get token: {symb}, price: {price.text.strip('$ ')}")
+
+            resul[symb] = price.text.strip("$ ")
+
 
     return resul
 
@@ -123,7 +139,7 @@ def get_price_token(driver: webdriver.Chrome, url: str = "https://wallet.keplr.a
     price = driver.find_element(By.XPATH, price)
     network = driver.find_element(By.XPATH, network)
 
-    return [network.text.split(" ")[0].title(), price.text.split(' $')[0], price.text.split(' $')[-1]]
+    return [network.text.title(), price.text.split(' $')[0], price.text.split(' $')[-1]]
 
 def get_apr_keplr(driver: webdriver.Chrome):
     tmp = {}
@@ -144,6 +160,27 @@ def get_apr_keplr(driver: webdriver.Chrome):
             continue
 
         tmp[network] = float(a.text[-6:-1])
+
+    if "Band" not in tmp:
+        log.info(f"I get APR <-> Band")
+        path_integer = "/html/body/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div[3]/section/div/div/div[6]/div/div/div/div[2]/div/div[2]/div"
+        path_price = "/html/body/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[1]/div/section/div/div/div[3]/div/div[1]/div/div/div[1]/div[1]/div/div/div/div/div/div[2]/div"
+        driver.get("https://www.mintscan.io/band")
+        log.info(f"Wait 5")
+        time.sleep(5)
+        a = driver.find_element(By.XPATH, path_integer)
+
+        tmp["Band"] = a.text.strip("%")
+
+    if "Archway" not in tmp:
+        log.info(f"I get APR <-> Archway")
+        path_integer = "/html/body/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div/div[2]/div[1]/div/div[2]/div/div/div[3]/section/div/div/div[6]/div/div/div/div[2]/div/div[2]/div"
+        driver.get("https://www.mintscan.io/archway")
+        log.info(f"Wait 5")
+        time.sleep(5)
+        a = driver.find_element(By.XPATH, path_integer)
+        tmp["Archway"] = a.text.strip("%")
+        
     
     log.debug(f"TMP APR: {tmp}")
     return tmp
@@ -155,7 +192,7 @@ def get_validator_commision():
     pass
 
 def main():
-    memo = MemeApi.MemeApi()
+    
 
     while 1: 
         start_time = time.time()
@@ -163,6 +200,7 @@ def main():
             
             log.info("Start APR monitoring")
             data = work_json.get_json()
+            memo = MemeApi.MemeApi(data["id"], "Get_APR")
 
             driver = webdriver.Remote(
             command_executor=f"{config_toml['Update']['url_driver']}/wd/hub",
@@ -176,6 +214,7 @@ def main():
 
             symbs = memo.Get_Available_Blockchains_Symbols()
             resul = get_url_network_Keplr(driver=driver, driver2=driver2, symbs=symbs)
+            memo.Update_Symbols_Price(data=resul)
             log.info(f"Get price token: {resul}")
             
             data['APR'] = get_apr_keplr(driver) if config_toml['Update']['enable_chromeDriver'] else get_apr_math()

@@ -8,7 +8,7 @@ from WorkJson import WorkWithJson
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
-memo = MemeApi.MemeApi()
+
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -33,9 +33,9 @@ cache_users = None
 user_delegates = None
 
 async def process_network(name_network: dict):
-    global memo
     data = work_json.get_json()
-
+    id_log = data["id"]
+    memo = MemeApi.MemeApi(id=id_log, network=name_network)
 
     try: 
         id_network = str(name_network.get('id'))
@@ -43,6 +43,8 @@ async def process_network(name_network: dict):
             rest=config_toml['network'][name_network.get('name')]['rest'],
             rpc=config_toml['network'][name_network.get('name')]['rpc'],
             valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
+            id=id_log,
+            network=name_network
         )
         # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
         transactions_type = memo.Get_Available_Transaction_Types()
@@ -59,7 +61,7 @@ async def process_network(name_network: dict):
         for height in data_memo_address_time:
             for address in data_memo_address_time[height].keys():
                 if address not in cache_users[id_network]:
-                    log.info(f"Add new user with: {address}")
+                    log.info(f"{id_log} | {name_network}  ->  Add new user with: {address}")
                     userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
                     cache_users[id_network][address] = userId
                     user_delegates[id_network][address] = 0
@@ -84,7 +86,7 @@ async def process_network(name_network: dict):
                 continue
             
             amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][address], data["APR"][name_network.get('name')])
-            log.info(f"{name_network.get('name')} | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
+            log.info(f"{id_log} | {name_network}  ->  {name_network.get('name')} | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
 
             userId = cache_users[id_network][address]
             memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
@@ -94,11 +96,14 @@ async def process_network(name_network: dict):
 
 
 async def main():
-    global cache_users, user_delegates, memo
-    
+    global cache_users, user_delegates
+    data = work_json.get_json()
+    id_log = data["id"]
+    memo = MemeApi.MemeApi(id=id_log, network="TYPE START")
 
     while True:
         log.info("Start")
+        
         star_time = time.time()
 
         if cache_users == None:
@@ -108,7 +113,7 @@ async def main():
             user_delegates = memo.Get_Users_Delegated_Amounts()
 
 
-        tasks = [process_network(name_network) for name_network in memo.Get_Available_Blockchains_Types()]
+        tasks = [process_network(memo.Get_Available_Blockchains_Types()[-1])] #[process_network(name_network, memo=memo) for name_network in memo.Get_Available_Blockchains_Types()]
         await asyncio.gather(*tasks)
         
 

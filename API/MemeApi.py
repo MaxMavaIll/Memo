@@ -24,24 +24,28 @@ class MemeApi():
 
     HOSTNAME = "https://memo.w3coins.io"
 
+    def __init__(self, id: int, network: str) -> None:
+        self.id_log = id
+        self.network = network
+
     def Get_Cache(self) -> list(dict()):
-        log.info("#--Get_Cache--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Cache--#")
 
         answer = requests.get(f"{self.HOSTNAME}/api/users/cache")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             return json.loads(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
     def Get_Users_Delegated_Amounts(
             self
             ) -> list(dict()):
-        log.info("#--Get_Users_Delegated_Amounts--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Users_Delegated_Amounts--#")
 
 
 
@@ -50,70 +54,69 @@ class MemeApi():
 
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             return json.loads(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
 
     def Get_Available_Wallet_Types(self) -> list(dict()):
-        log.info("#--Get_Available_Wallet_Types--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Available_Wallet_Types--#")
         answer = requests.get(f"{self.HOSTNAME}/api/transactions/marks")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             return json.loads(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
 
     def Get_Available_Transaction_Types(self) -> list():
-        log.info("#--Get_Available_Transaction_Types--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Available_Transaction_Types--#")
         answer = requests.get(f"{self.HOSTNAME}/api/transactions/types")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             return json.loads(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
 
     def Get_Available_Blockchains_Types(self) -> list:
-        log.info("#--Get_Available_Blockchains_Types--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Available_Blockchains_Types--#")
         answer = requests.get(f"{self.HOSTNAME}/api/blockchains")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
-            # return json.loads(answer.text)
-            return [{'id': 1, 'name': "Cosmos"}]
+            return json.loads(answer.text)
+            # return [{'id': 1, 'name': "Cosmos"}]
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
     def Get_Available_Blockchains_Symbols(self) -> list:
-        log.info("#--Get_Available_Blockchains_Symbols--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Available_Blockchains_Symbols--#")
         answer = requests.get(f"{self.HOSTNAME}/api/blockchains/symbols")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
-            # return json.loads(answer.text)
-            return ['atom']
+            return json.loads(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")      
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")      
 
     def Add_New_User(
             self, 
@@ -121,7 +124,7 @@ class MemeApi():
             walletType: int, 
             blockchain: int
             ) -> int:
-        log.info("#--Add_New_User--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Add_New_User--#")
 
         payload = json.dumps({
             "address": address,
@@ -138,14 +141,14 @@ class MemeApi():
         answer = requests.post(f"{self.HOSTNAME}/api/users", headers=headers, data=payload)
 
         if answer.status_code == 201:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return data.get('id')
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
     def Add_New_Transactions(
             self, 
@@ -155,7 +158,7 @@ class MemeApi():
             executedAt: str,
             hash: str
             ):
-        log.info("#--Add_New_User--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Add_New_User--#")
         payload = json.dumps({
             "userId": userId,
             "typeId": typeId,
@@ -172,12 +175,12 @@ class MemeApi():
 
 
         if answer.status_code == 201:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
     def Update_User_Stats(
             self, 
@@ -185,7 +188,7 @@ class MemeApi():
             amountUserRewards: str,
             amountValidatorRewards: str
             ):
-        log.info("#--Update--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Update--#")
 
         payload = json.dumps({
         "userId": userId,
@@ -201,11 +204,34 @@ class MemeApi():
 
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
+    def Update_Symbols_Price(
+            self, 
+            data: dict
+            ):
+        log.info(f"{self.id_log} | {self.network}  -> #--Update Symbols Price--#")
+
+        payload = json.dumps(data)
+
+        headers = {
+        'Authorization': '-',
+        'Content-Type': 'application/json'
+        }
+
+        answer = requests.patch(f"{self.HOSTNAME}/api/blockchains/symbols", headers=headers, data=payload)
+
+
+        if answer.status_code == 200:
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.debug(answer.text)
+        
+        else:
+            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
     

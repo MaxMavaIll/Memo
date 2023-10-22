@@ -25,20 +25,18 @@ log.addHandler(log_f)
 class CosmosRequestApi():
     CACHE_HEIGHT = dict()
     
-    def __init__(self, rest: str, rpc: str, valoper_address: str) -> None:
+    def __init__(self, rest: str, rpc: str, valoper_address: str, id: int, network: str) -> None:
         self.rest = rest
         self.rpc = rpc
         self.valoper_address = valoper_address
-        self.tx_hash = []
-        self.tx_hash_user = []
-        self.executedAt = []
-
+        self.id_log = id
+        self.network = network
 
     def Get_address(
             self, 
             transaction_type: str
         ) -> list:
-        log.info("#--Get_address--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_address--#")
         addresses = []
         
         if transaction_type == "DELEGATE": 
@@ -49,7 +47,7 @@ class CosmosRequestApi():
         
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             for key in ['unbonding_responses', 'delegation_responses']:
@@ -70,12 +68,12 @@ class CosmosRequestApi():
             self, 
             address: str
         ) -> int:
-        log.info("#--Get_Account_Wallet--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Get_Account_Wallet--#")
         
         answer = requests.get(f"{self.rest}/cosmos/auth/v1beta1/accounts/{address}")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return int(data['account']['sequence']) - 1
@@ -98,7 +96,7 @@ class CosmosRequestApi():
 
             answer = requests.get(f"{self.rpc}/tx_search?query=\"tx.acc_seq='{address}/{sequence - tmp }'\"")
             if answer.status_code == 200:
-                log.info("Success, I get 200")
+                log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
                 log.debug(answer.text)
                 data = json.loads(answer.text)
                 if data['tx']['body']['messages'][0] != []:
@@ -122,7 +120,7 @@ class CosmosRequestApi():
         for tx_hash in self.Tx_Search(address=address):
             answer = requests.get(f"{self.rest}/cosmos/tx/v1beta1/txs/{tx_hash}")
             if answer.status_code == 200:
-                log.info("Success, I get 200")
+                log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
                 log.debug(answer.text)
                 data = json.loads(answer.text)
                 if data['result']['txs'] != []:
@@ -140,7 +138,7 @@ class CosmosRequestApi():
         answer = requests.get(f"{self.rest}/cosmos/tx/v1beta1/txs/{hash}")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return data['tx']['body'], data
@@ -158,7 +156,7 @@ class CosmosRequestApi():
         answer = requests.get(f"{self.rpc}/tx_search?query=\"tx.height={height}\"")
 
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return [tmp['hash'] for tmp in data['result']['txs']]
@@ -234,7 +232,7 @@ class CosmosRequestApi():
 
         answer = requests.get(f"{self.rpc}/status")
         if answer.status_code == 200:
-            log.info("Success, I get 200")
+            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return int(data['result']['sync_info']['latest_block_height'])
@@ -262,7 +260,7 @@ class CosmosRequestApi():
 
             for tmp_height in range(height, last_height_network):
                 
-                log.info(f"\n\nHeight: {tmp_height} - {last_height_network}\n")
+                log.info(f"{self.id_log} | {self.network}  -> \n\nHeight: {tmp_height} - {last_height_network}\n")
                 memo = self.Get_Memo(tmp_height, transactions_types=transactions_type, wallet_types=wallet_type, address_user=address_user)
                 if memo != {}:
                     cache_hashes[tmp_height] = memo
@@ -310,7 +308,7 @@ class CosmosRequestApi():
     #     answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}")
 
     #     if answer.status_code == 200:
-    #         log.info("Success, I get 200")
+    #         log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
     #         log.debug(answer.text)
     #         data = json.loads(answer.text)
     #         return float(data['rewards'][-1]['amount']) / 1000000
@@ -323,7 +321,7 @@ class CosmosRequestApi():
     #     answer = requests.get(f"{self.rest}/cosmos/distribution/v1beta1/validators/{self.valoper_address}/commission")
 
     #     if answer.status_code == 200:
-    #         log.info("Success, I get 200")
+    #         log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
     #         log.debug(answer.text)
     #         data = json.loads(answer.text)
             
@@ -341,7 +339,7 @@ class CosmosRequestApi():
     #     answer = requests.get(f"{self.rest}/cosmos/staking/v1beta1/delegations/{address_user}")
 
     #     if answer.status_code == 200:
-    #         log.info("Success, I get 200")
+    #         log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
     #         log.debug(answer.text)
     #         data = json.loads(answer.text)
     #         for tmp in data['delegation_responses']:
