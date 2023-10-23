@@ -36,7 +36,7 @@ class CosmosRequestApi():
             self, 
             transaction_type: str
         ) -> list:
-        log.info(f"{self.id_log} | {self.network}  -> #--Get_address--#")
+        log.info(f"ID {self.id_log} | {self.network}  -> #--Get_address--#")
         addresses = []
         
         if transaction_type == "DELEGATE": 
@@ -47,7 +47,7 @@ class CosmosRequestApi():
         
 
         if answer.status_code == 200:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             for key in ['unbonding_responses', 'delegation_responses']:
@@ -68,12 +68,12 @@ class CosmosRequestApi():
             self, 
             address: str
         ) -> int:
-        log.info(f"{self.id_log} | {self.network}  -> #--Get_Account_Wallet--#")
+        log.info(f"ID {self.id_log} | {self.network}  -> #--Get_Account_Wallet--#")
         
         answer = requests.get(f"{self.rest}/cosmos/auth/v1beta1/accounts/{address}")
 
         if answer.status_code == 200:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return int(data['account']['sequence']) - 1
@@ -96,7 +96,7 @@ class CosmosRequestApi():
 
             answer = requests.get(f"{self.rpc}/tx_search?query=\"tx.acc_seq='{address}/{sequence - tmp }'\"")
             if answer.status_code == 200:
-                log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+                log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
                 log.debug(answer.text)
                 data = json.loads(answer.text)
                 if data['tx']['body']['messages'][0] != []:
@@ -120,7 +120,7 @@ class CosmosRequestApi():
         for tx_hash in self.Tx_Search(address=address):
             answer = requests.get(f"{self.rest}/cosmos/tx/v1beta1/txs/{tx_hash}")
             if answer.status_code == 200:
-                log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+                log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
                 log.debug(answer.text)
                 data = json.loads(answer.text)
                 if data['result']['txs'] != []:
@@ -135,10 +135,12 @@ class CosmosRequestApi():
             self,
             hash: str
     ) -> dict:
+        log.info(f"ID {self.id_log} | {self.network}  -> Get info with Hash user :: {hash}")
+
         answer = requests.get(f"{self.rest}/cosmos/tx/v1beta1/txs/{hash}")
 
         if answer.status_code == 200:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return data['tx']['body'], data
@@ -152,13 +154,15 @@ class CosmosRequestApi():
             self,
             height: int
     ) -> list:
+        log.info(f"ID {self.id_log} | {self.network}  -> Get bock hashes")
         
         answer = requests.get(f"{self.rpc}/tx_search?query=\"tx.height={height}\"")
 
         if answer.status_code == 200:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
+            log.info(f"ID {self.id_log} | {self.network}  -> Total hash {len([tmp['hash'] for tmp in data['result']['txs']])}")
             return [tmp['hash'] for tmp in data['result']['txs']]
         
         else:
@@ -180,12 +184,13 @@ class CosmosRequestApi():
             
             data, full_data = self.Get_Memo_Address_With_Transaction(hash=hash)
 
-            if full_data == []:
+            if full_data == {}:
                 log.warn(f"Пропуск блоку хеша: {hash}")
                 continue
 
-            
-            if data['messages'][0]['@type'].split(".")[-1].upper() == "MSGGELEGATE":
+            text_type_transaction = data['messages'][0]['@type'].split(".")[-1].upper()
+
+            if text_type_transaction == "MSGDELEGATE":
                 # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
                 if data['messages'][0]['validator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0:
@@ -208,23 +213,32 @@ class CosmosRequestApi():
                                                                 'time': time
                                                                 }
                     
-            elif data['messages'][0]['@type'].split(".")[-1].upper() in ["MSGGELEGATE", "MSGREGELEGATE"]:
-                if data['messages'][0]['validator_address'] != self.valoper_address or \
-                    full_data['tx_response']["code"] != 0 or \
-                    data['messages'][0]['delegator_address'] not in address_user:
-                    continue
+            elif text_type_transaction in ["MSGUNDELEGATE", "MSGBEGINREDELEGATE"]:
+                if text_type_transaction == "MSGUNDELEGATE":
+                    if data['messages'][0]['validator_address'] != self.valoper_address or \
+                        full_data['tx_response']["code"] != 0:
+                        continue
 
-                amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
-                time = full_data['tx_response']['timestamp']
+                elif text_type_transaction == "MSGBEGINREDELEGATE":
+                    if data['messages'][0]['validator_src_address'] != self.valoper_address or \
+                        full_data['tx_response']["code"] != 0:
+                        continue
+                    
 
+                    
+                for memo_id in  address_user:
+                    if data['messages'][0]['delegator_address'] not in address_user[memo_id]:
+                        continue
 
-                cache_hashes[data['messages'][0]['delegator_address']] = {
-                                                            'memo': 1,
-                                                            'typeId': transactions_types[1].get('id'), 
-                                                            'amount': amount,
-                                                            'hash': hash,
-                                                            'time': time
-                                                            }
+                    amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                    time = full_data['tx_response']['timestamp']
+                    cache_hashes[data['messages'][0]['delegator_address']] = {
+                                                                'memo': memo_id,
+                                                                'typeId': transactions_types[1].get('id'), 
+                                                                'amount': amount,
+                                                                'hash': hash,
+                                                                'time': time
+                                                                }
 
         return cache_hashes
 
@@ -232,7 +246,7 @@ class CosmosRequestApi():
 
         answer = requests.get(f"{self.rpc}/status")
         if answer.status_code == 200:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(answer.text)
             data = json.loads(answer.text)
             return int(data['result']['sync_info']['latest_block_height'])
@@ -249,23 +263,27 @@ class CosmosRequestApi():
     ) -> dict:
         try:
             settings_json = work_json.get_json()
-            height = settings_json['last_height']
             last_height_network = self.get_height()
             cache_hashes = {}
             
             
             
-            if height == None:
-                height = last_height_network
+            if settings_json['last_height'] == None:
+                settings_json['last_height'] = {}
+                settings_json['last_height'][self.network] = last_height_network
+            
+            
+            height = settings_json['last_height'][self.network]
+            
 
             for tmp_height in range(height, last_height_network):
                 
-                log.info(f"{self.id_log} | {self.network}  -> \n\nHeight: {tmp_height} - {last_height_network}\n")
+                log.info(f"ID {self.id_log} | {self.network}  -> \n\nHeight: {tmp_height} - {last_height_network}\n")
                 memo = self.Get_Memo(tmp_height, transactions_types=transactions_type, wallet_types=wallet_type, address_user=address_user)
                 if memo != {}:
                     cache_hashes[tmp_height] = memo
 
-            settings_json['last_height'] = last_height_network
+            settings_json['last_height'][self.network] = last_height_network
             work_json.set_json(settings_json)
             return cache_hashes
         

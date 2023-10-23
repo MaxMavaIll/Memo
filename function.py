@@ -44,7 +44,5 @@ def get_APR_from(
 
     return f"{float(reward) - float(reward) * 0.02:.10f}", f"{float(reward) * 0.02:.10f}" # amountDelegated * ( APR / 100 ) / minute
 
-def update_APR(
-        reward_for_minute: int
-):
-    pass
+
+

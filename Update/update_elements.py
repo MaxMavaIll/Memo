@@ -127,7 +127,6 @@ def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, s
 
     return resul
 
-
 def get_price_token(driver: webdriver.Chrome, url: str = "https://wallet.keplr.app/chains/osmosis") -> list:
 
     price = "/html/body/div/div/div[3]/div[1]/div[3]/div[2]/div/div/div/div[1]/div[2]/div/span/span"
