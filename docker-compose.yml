@@ -11,7 +11,7 @@ services:
       - ./logs:/app/logs
       - ./config.toml:/app/config.toml
       - ./settings.json:/app/settings.json
-      - ./Update/network_price.json:/app/network_price.json
+      - ./Update/network_price.json:/app/Update/network_price.json
     command: ["python", "main.py"]
 
   apr:
