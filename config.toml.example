@@ -12,6 +12,9 @@ url_driver = "http://localhost:4444"
 # Час вимірюється у годинах 1 = 1 hour
 time = 1 
 
+[network]
+isMainnet = false
+
 
 [network.Cosmos]
 rest = ''

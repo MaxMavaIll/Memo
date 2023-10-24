@@ -1,0 +1,381 @@
+__main__ 2023-10-24 12:41:32,361 INFO Start APR monitoring
+__main__ 2023-10-24 12:41:35,166 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 12:41:35,173 INFO Symb: ing
+__main__ 2023-10-24 12:41:35,175 ERROR Error APR
+Traceback (most recent call last):
+  File "/app/update_elements.py", line 217, in main
+    resul = get_url_network_Keplr(driver=driver, driver2=driver2, symbs=symbs)
+  File "/app/update_elements.py", line 92, in get_url_network_Keplr
+    if symb.upper() not in  data[network]['token']:
+TypeError: 'NoneType' object is not subscriptable
+__main__ 2023-10-24 12:41:35,434 INFO Time work 3.0729966163635254 sec
+__main__ 2023-10-24 12:41:35,441 INFO Wait 7 hour
+__main__ 2023-10-24 12:41:59,652 INFO Start APR monitoring
+__main__ 2023-10-24 12:42:02,323 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 12:42:02,327 INFO Data == {}
+__main__ 2023-10-24 12:42:03,689 INFO Wait 2 sec
+__main__ 2023-10-24 12:42:16,076 INFO Add ATOM <-> https://wallet.keplr.app/chains/cosmos-hub
+__main__ 2023-10-24 12:42:22,984 INFO Add OSMO <-> https://wallet.keplr.app/chains/osmosis
+__main__ 2023-10-24 12:42:29,067 INFO Add BLD <-> https://wallet.keplr.app/chains/agoric
+__main__ 2023-10-24 12:42:35,122 INFO Add AKT <-> https://wallet.keplr.app/chains/akash
+__main__ 2023-10-24 12:42:42,219 INFO Add AXL <-> https://wallet.keplr.app/chains/axelar
+__main__ 2023-10-24 12:42:54,103 INFO Add CRO <-> https://wallet.keplr.app/chains/cronos-pos
+__main__ 2023-10-24 12:43:07,709 INFO Add EVMOS <-> https://wallet.keplr.app/chains/evmos
+__main__ 2023-10-24 12:43:16,002 INFO Add LORE <-> https://wallet.keplr.app/chains/gitopia
+__main__ 2023-10-24 12:43:30,197 INFO Add INJ <-> https://wallet.keplr.app/chains/injective
+__main__ 2023-10-24 12:43:35,804 INFO Add IRIS <-> https://wallet.keplr.app/chains/irisnet
+__main__ 2023-10-24 12:43:47,812 INFO Add JUNO <-> https://wallet.keplr.app/chains/juno
+__main__ 2023-10-24 12:43:54,303 INFO Add KAVA <-> https://wallet.keplr.app/chains/kava
+__main__ 2023-10-24 12:44:14,392 INFO Add MARS <-> https://wallet.keplr.app/chains/mars-hub
+__main__ 2023-10-24 12:44:20,077 INFO Add NTRN <-> https://wallet.keplr.app/chains/neutron
+__main__ 2023-10-24 12:44:26,048 INFO Add USDC <-> https://wallet.keplr.app/chains/noble
+__main__ 2023-10-24 12:44:31,283 INFO Add FLIX <-> https://wallet.keplr.app/chains/omniflix
+__main__ 2023-10-24 12:44:37,138 INFO Add XPRT <-> https://wallet.keplr.app/chains/persistence
+__main__ 2023-10-24 12:44:44,426 INFO Add QSR <-> https://wallet.keplr.app/chains/quasar
+__main__ 2023-10-24 12:44:50,954 INFO Add QCK <-> https://wallet.keplr.app/chains/quicksilver
+__main__ 2023-10-24 12:44:56,971 INFO Add REGEN <-> https://wallet.keplr.app/chains/regen
+__main__ 2023-10-24 12:45:03,056 INFO Add SCRT <-> https://wallet.keplr.app/chains/secret-network
+__main__ 2023-10-24 12:45:17,372 INFO Add CTK <-> https://wallet.keplr.app/chains/shentu
+__main__ 2023-10-24 12:45:30,989 INFO Add SOMM <-> https://wallet.keplr.app/chains/sommelier
+__main__ 2023-10-24 12:45:53,458 INFO Add STRD <-> https://wallet.keplr.app/chains/stride
+__main__ 2023-10-24 12:45:59,696 INFO Add LUNA <-> https://wallet.keplr.app/chains/terra
+__main__ 2023-10-24 12:46:05,931 DEBUG Data network_price: {'network_url': {'Cosmos Hub': {'token': 'ATOM', 'url': 'https://wallet.keplr.app/chains/cosmos-hub'}, 'Osmosis': {'token': 'OSMO', 'url': 'https://wallet.keplr.app/chains/osmosis'}, 'Agoric': {'token': 'BLD', 'url': 'https://wallet.keplr.app/chains/agoric'}, 'Akash': {'token': 'AKT', 'url': 'https://wallet.keplr.app/chains/akash'}, 'Axelar': {'token': 'AXL', 'url': 'https://wallet.keplr.app/chains/axelar'}, 'Cronos Pos': {'token': 'CRO', 'url': 'https://wallet.keplr.app/chains/cronos-pos'}, 'Evmos': {'token': 'EVMOS', 'url': 'https://wallet.keplr.app/chains/evmos'}, 'Gitopia': {'token': 'LORE', 'url': 'https://wallet.keplr.app/chains/gitopia'}, 'Injective': {'token': 'INJ', 'url': 'https://wallet.keplr.app/chains/injective'}, 'Irisnet': {'token': 'IRIS', 'url': 'https://wallet.keplr.app/chains/irisnet'}, 'Juno': {'token': 'JUNO', 'url': 'https://wallet.keplr.app/chains/juno'}, 'Kava': {'token': 'KAVA', 'url': 'https://wallet.keplr.app/chains/kava'}, 'Mars Hub': {'token': 'MARS', 'url': 'https://wallet.keplr.app/chains/mars-hub'}, 'Neutron': {'token': 'NTRN', 'url': 'https://wallet.keplr.app/chains/neutron'}, 'Noble': {'token': 'USDC', 'url': 'https://wallet.keplr.app/chains/noble'}, 'Omniflix': {'token': 'FLIX', 'url': 'https://wallet.keplr.app/chains/omniflix'}, 'Persistence': {'token': 'XPRT', 'url': 'https://wallet.keplr.app/chains/persistence'}, 'Quasar': {'token': 'QSR', 'url': 'https://wallet.keplr.app/chains/quasar'}, 'Quicksilver': {'token': 'QCK', 'url': 'https://wallet.keplr.app/chains/quicksilver'}, 'Regen': {'token': 'REGEN', 'url': 'https://wallet.keplr.app/chains/regen'}, 'Secret Network': {'token': 'SCRT', 'url': 'https://wallet.keplr.app/chains/secret-network'}, 'Shentu': {'token': 'CTK', 'url': 'https://wallet.keplr.app/chains/shentu'}, 'Sommelier': {'token': 'SOMM', 'url': 'https://wallet.keplr.app/chains/sommelier'}, 'Stride': {'token': 'STRD', 'url': 'https://wallet.keplr.app/chains/stride'}, 'Terra': {'token': 'LUNA', 'url': 'https://wallet.keplr.app/chains/terra'}}, 'APR': None}
+__main__ 2023-10-24 12:46:05,965 INFO Symb: ing
+__main__ 2023-10-24 12:46:05,969 INFO Symb: arch
+__main__ 2023-10-24 12:46:08,686 INFO Wait 5
+__main__ 2023-10-24 12:46:14,245 INFO Get token: arch, price: 0.0519
+__main__ 2023-10-24 12:46:14,314 INFO Symb: band
+__main__ 2023-10-24 12:46:16,587 INFO Wait 5
+__main__ 2023-10-24 12:46:21,869 INFO Get token: band, price: 1.530
+__main__ 2023-10-24 12:46:21,965 INFO Symb: atom
+__main__ 2023-10-24 12:46:30,084 INFO Get token: ATOM, price: 7.28
+__main__ 2023-10-24 12:46:30,094 INFO Symb: inj
+__main__ 2023-10-24 12:46:37,302 INFO Get token: INJ, price: 12.7
+__main__ 2023-10-24 12:46:37,329 INFO Symb: apr
+__main__ 2023-10-24 12:46:37,617 INFO Get price token: {'arch': '0.0519', 'band': '1.530', 'atom': '7.28', 'inj': '12.7'}
+__main__ 2023-10-24 12:46:37,622 INFO I get APR <-> Cosmos Hub
+__main__ 2023-10-24 12:46:39,589 INFO Wait 2 sec
+__main__ 2023-10-24 12:46:46,334 INFO I get APR <-> Osmosis
+__main__ 2023-10-24 12:46:49,088 INFO Wait 2 sec
+__main__ 2023-10-24 12:46:52,992 INFO I get APR <-> Agoric
+__main__ 2023-10-24 12:46:55,538 INFO Wait 2 sec
+__main__ 2023-10-24 12:46:58,470 INFO I get APR <-> Akash
+__main__ 2023-10-24 12:47:00,957 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:03,809 INFO I get APR <-> Axelar
+__main__ 2023-10-24 12:47:05,896 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:08,342 INFO I get APR <-> Cronos Pos
+__main__ 2023-10-24 12:47:10,002 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:13,642 INFO I get APR <-> Evmos
+__main__ 2023-10-24 12:47:15,855 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:20,807 INFO I get APR <-> Gitopia
+__main__ 2023-10-24 12:47:23,273 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:26,301 INFO I get APR <-> Injective
+__main__ 2023-10-24 12:47:28,220 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:31,038 INFO I get APR <-> Irisnet
+__main__ 2023-10-24 12:47:33,240 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:35,440 INFO I get APR <-> Juno
+__main__ 2023-10-24 12:47:36,990 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:41,954 INFO I get APR <-> Kava
+__main__ 2023-10-24 12:47:43,818 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:47,619 INFO I get APR <-> Mars Hub
+__main__ 2023-10-24 12:47:50,106 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:52,952 INFO I get APR <-> Neutron
+__main__ 2023-10-24 12:47:55,343 INFO Wait 2 sec
+__main__ 2023-10-24 12:47:57,472 INFO Neutron error
+__main__ 2023-10-24 12:47:57,481 INFO I get APR <-> Noble
+__main__ 2023-10-24 12:47:59,430 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:01,607 INFO Noble error
+__main__ 2023-10-24 12:48:01,628 INFO I get APR <-> Omniflix
+__main__ 2023-10-24 12:48:04,133 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:07,096 INFO I get APR <-> Persistence
+__main__ 2023-10-24 12:48:09,844 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:12,802 INFO I get APR <-> Quasar
+__main__ 2023-10-24 12:48:14,644 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:17,324 INFO I get APR <-> Quicksilver
+__main__ 2023-10-24 12:48:19,677 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:23,443 INFO I get APR <-> Regen
+__main__ 2023-10-24 12:48:25,032 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:28,343 INFO I get APR <-> Secret Network
+__main__ 2023-10-24 12:48:31,180 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:33,582 INFO I get APR <-> Shentu
+__main__ 2023-10-24 12:48:35,245 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:39,529 INFO I get APR <-> Sommelier
+__main__ 2023-10-24 12:48:44,102 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:46,284 INFO I get APR <-> Stride
+__main__ 2023-10-24 12:48:48,280 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:51,544 INFO I get APR <-> Terra
+__main__ 2023-10-24 12:48:53,840 INFO Wait 2 sec
+__main__ 2023-10-24 12:48:57,979 INFO I get APR <-> Band
+__main__ 2023-10-24 12:49:00,051 INFO Wait 5
+__main__ 2023-10-24 12:49:05,306 INFO I get APR <-> Archway
+__main__ 2023-10-24 12:49:07,046 INFO Wait 5
+__main__ 2023-10-24 12:49:12,258 DEBUG TMP APR: {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.48, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 12:49:12,286 INFO Get price token: {'arch': '0.0519', 'band': '1.530', 'atom': '7.28', 'inj': '12.7'}
+__main__ 2023-10-24 12:49:14,252 INFO Time work 434.5988984107971 sec
+__main__ 2023-10-24 12:49:14,261 INFO Wait 7 hour
+__main__ 2023-10-24 12:53:05,779 INFO Start APR monitoring
+__main__ 2023-10-24 12:53:09,296 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 12:53:09,300 INFO Symb: ing
+__main__ 2023-10-24 12:53:09,304 INFO Symb: arch
+__main__ 2023-10-24 12:53:11,903 INFO Wait 5
+__main__ 2023-10-24 12:53:17,478 INFO Get token: arch, price: 0.0518
+__main__ 2023-10-24 12:53:17,596 INFO Symb: band
+__main__ 2023-10-24 12:53:19,996 INFO Wait 5
+__main__ 2023-10-24 12:53:25,750 INFO Get token: band, price: 1.530
+__main__ 2023-10-24 12:53:25,848 INFO Symb: atom
+__main__ 2023-10-24 12:53:34,729 INFO Get token: ATOM, price: 7.28
+__main__ 2023-10-24 12:53:34,752 INFO Symb: inj
+__main__ 2023-10-24 12:53:40,071 INFO Get token: INJ, price: 12.6
+__main__ 2023-10-24 12:53:40,079 INFO Symb: apr
+__main__ 2023-10-24 12:53:40,354 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.28', 'inj': '12.6'}
+__main__ 2023-10-24 12:53:40,362 INFO I get APR <-> Cosmos Hub
+__main__ 2023-10-24 12:53:42,290 INFO Wait 2 sec
+__main__ 2023-10-24 12:53:49,543 INFO I get APR <-> Osmosis
+__main__ 2023-10-24 12:53:51,189 INFO Wait 2 sec
+__main__ 2023-10-24 12:53:56,033 INFO I get APR <-> Agoric
+__main__ 2023-10-24 12:53:58,461 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:01,407 INFO I get APR <-> Akash
+__main__ 2023-10-24 12:54:03,173 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:06,669 INFO I get APR <-> Axelar
+__main__ 2023-10-24 12:54:08,253 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:11,590 INFO I get APR <-> Cronos Pos
+__main__ 2023-10-24 12:54:13,784 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:17,026 INFO I get APR <-> Evmos
+__main__ 2023-10-24 12:54:19,202 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:24,282 INFO I get APR <-> Gitopia
+__main__ 2023-10-24 12:54:28,696 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:30,919 INFO I get APR <-> Injective
+__main__ 2023-10-24 12:54:32,833 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:35,657 INFO I get APR <-> Irisnet
+__main__ 2023-10-24 12:54:38,669 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:42,835 INFO I get APR <-> Juno
+__main__ 2023-10-24 12:54:45,532 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:49,720 INFO I get APR <-> Kava
+__main__ 2023-10-24 12:54:52,247 INFO Wait 2 sec
+__main__ 2023-10-24 12:54:55,486 INFO I get APR <-> Mars Hub
+__main__ 2023-10-24 12:54:57,375 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:00,587 INFO I get APR <-> Neutron
+__main__ 2023-10-24 12:55:03,018 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:05,152 INFO Neutron error
+__main__ 2023-10-24 12:55:05,158 INFO I get APR <-> Noble
+__main__ 2023-10-24 12:55:07,428 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:09,555 INFO Noble error
+__main__ 2023-10-24 12:55:09,570 INFO I get APR <-> Omniflix
+__main__ 2023-10-24 12:55:13,410 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:15,755 INFO I get APR <-> Persistence
+__main__ 2023-10-24 12:55:17,969 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:20,993 INFO I get APR <-> Quasar
+__main__ 2023-10-24 12:55:24,842 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:27,035 INFO I get APR <-> Quicksilver
+__main__ 2023-10-24 12:55:29,348 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:32,847 INFO I get APR <-> Regen
+__main__ 2023-10-24 12:55:35,244 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:37,520 INFO I get APR <-> Secret Network
+__main__ 2023-10-24 12:55:39,290 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:42,262 INFO I get APR <-> Shentu
+__main__ 2023-10-24 12:55:44,274 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:48,071 INFO I get APR <-> Sommelier
+__main__ 2023-10-24 12:55:50,551 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:52,723 INFO I get APR <-> Stride
+__main__ 2023-10-24 12:55:53,939 INFO Wait 2 sec
+__main__ 2023-10-24 12:55:57,745 INFO I get APR <-> Terra
+__main__ 2023-10-24 12:56:00,384 INFO Wait 2 sec
+__main__ 2023-10-24 12:56:03,825 INFO I get APR <-> Band
+__main__ 2023-10-24 12:56:05,866 INFO Wait 5
+__main__ 2023-10-24 12:56:11,055 INFO I get APR <-> Archway
+__main__ 2023-10-24 12:56:11,654 INFO Wait 5
+__main__ 2023-10-24 12:56:16,989 DEBUG TMP APR: {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.48, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 12:56:17,002 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.28', 'inj': '12.6'}
+__main__ 2023-10-24 12:56:19,371 INFO Time work 193.5918505191803 sec
+__main__ 2023-10-24 12:56:19,380 INFO Wait 7 hour
+__main__ 2023-10-24 12:59:01,641 INFO Start APR monitoring
+__main__ 2023-10-24 12:59:04,419 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 12:59:04,425 INFO Symb: ing
+__main__ 2023-10-24 12:59:04,429 INFO Symb: arch
+__main__ 2023-10-24 12:59:07,035 INFO Wait 5
+__main__ 2023-10-24 12:59:12,251 INFO Get token: arch, price: 0.0518
+__main__ 2023-10-24 12:59:12,512 INFO Symb: band
+__main__ 2023-10-24 12:59:15,045 INFO Wait 5
+__main__ 2023-10-24 12:59:20,773 INFO Get token: band, price: 1.530
+__main__ 2023-10-24 12:59:20,858 INFO Symb: atom
+__main__ 2023-10-24 12:59:30,570 INFO Get token: ATOM, price: 7.26
+__main__ 2023-10-24 12:59:30,582 INFO Symb: inj
+__main__ 2023-10-24 12:59:36,374 INFO Get token: INJ, price: 12.4
+__main__ 2023-10-24 12:59:36,386 INFO Symb: apr
+__main__ 2023-10-24 12:59:36,661 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.26', 'inj': '12.4'}
+__main__ 2023-10-24 12:59:36,676 INFO I get APR <-> Cosmos Hub
+__main__ 2023-10-24 12:59:38,475 INFO Wait 2 sec
+__main__ 2023-10-24 12:59:44,996 INFO I get APR <-> Osmosis
+__main__ 2023-10-24 12:59:46,667 INFO Wait 2 sec
+__main__ 2023-10-24 12:59:51,668 INFO I get APR <-> Agoric
+__main__ 2023-10-24 12:59:56,213 INFO Wait 2 sec
+__main__ 2023-10-24 12:59:58,730 INFO I get APR <-> Akash
+__main__ 2023-10-24 13:00:00,923 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:04,339 INFO I get APR <-> Axelar
+__main__ 2023-10-24 13:00:06,246 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:09,253 INFO I get APR <-> Cronos Pos
+__main__ 2023-10-24 13:00:11,983 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:14,995 INFO I get APR <-> Evmos
+__main__ 2023-10-24 13:00:17,817 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:22,351 INFO I get APR <-> Gitopia
+__main__ 2023-10-24 13:00:24,069 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:27,477 INFO I get APR <-> Injective
+__main__ 2023-10-24 13:00:29,287 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:32,709 INFO I get APR <-> Irisnet
+__main__ 2023-10-24 13:00:35,279 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:37,460 INFO I get APR <-> Juno
+__main__ 2023-10-24 13:00:39,371 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:43,993 INFO I get APR <-> Kava
+__main__ 2023-10-24 13:00:46,284 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:49,638 INFO I get APR <-> Mars Hub
+__main__ 2023-10-24 13:00:52,610 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:55,080 INFO I get APR <-> Neutron
+__main__ 2023-10-24 13:00:57,345 INFO Wait 2 sec
+__main__ 2023-10-24 13:00:59,479 INFO Neutron error
+__main__ 2023-10-24 13:00:59,491 INFO I get APR <-> Noble
+__main__ 2023-10-24 13:01:02,256 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:04,389 INFO Noble error
+__main__ 2023-10-24 13:01:04,399 INFO I get APR <-> Omniflix
+__main__ 2023-10-24 13:01:06,765 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:09,411 INFO I get APR <-> Persistence
+__main__ 2023-10-24 13:01:11,897 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:14,854 INFO I get APR <-> Quasar
+__main__ 2023-10-24 13:01:17,053 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:19,315 INFO I get APR <-> Quicksilver
+__main__ 2023-10-24 13:01:22,031 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:25,772 INFO I get APR <-> Regen
+__main__ 2023-10-24 13:01:28,080 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:30,683 INFO I get APR <-> Secret Network
+__main__ 2023-10-24 13:01:35,034 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:37,647 INFO I get APR <-> Shentu
+__main__ 2023-10-24 13:01:40,087 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:43,628 INFO I get APR <-> Sommelier
+__main__ 2023-10-24 13:01:45,150 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:47,387 INFO I get APR <-> Stride
+__main__ 2023-10-24 13:01:49,825 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:52,709 INFO I get APR <-> Terra
+__main__ 2023-10-24 13:01:54,690 INFO Wait 2 sec
+__main__ 2023-10-24 13:01:58,640 INFO I get APR <-> Band
+__main__ 2023-10-24 13:02:00,673 INFO Wait 5
+__main__ 2023-10-24 13:02:05,850 INFO I get APR <-> Archway
+__main__ 2023-10-24 13:02:07,517 INFO Wait 5
+__main__ 2023-10-24 13:02:13,022 DEBUG TMP APR: {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.48, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:02:13,040 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.26', 'inj': '12.4'} {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.48, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:02:13,322 INFO Time work 191.68063735961914 sec
+__main__ 2023-10-24 13:02:13,328 INFO Wait 7 hour
+__main__ 2023-10-24 13:05:51,571 INFO Start APR monitoring
+__main__ 2023-10-24 13:05:55,351 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 13:05:55,356 INFO Symb: ing
+__main__ 2023-10-24 13:05:55,359 INFO Symb: arch
+__main__ 2023-10-24 13:05:57,764 INFO Wait 5
+__main__ 2023-10-24 13:06:03,130 INFO Get token: arch, price: 0.0518
+__main__ 2023-10-24 13:06:03,238 INFO Symb: band
+__main__ 2023-10-24 13:06:05,593 INFO Wait 5
+__main__ 2023-10-24 13:06:10,905 INFO Get token: band, price: 1.530
+__main__ 2023-10-24 13:06:10,999 INFO Symb: atom
+__main__ 2023-10-24 13:06:20,849 INFO Get token: ATOM, price: 7.22
+__main__ 2023-10-24 13:06:20,864 INFO Symb: inj
+__main__ 2023-10-24 13:06:26,547 INFO Get token: INJ, price: 12.4
+__main__ 2023-10-24 13:06:26,578 INFO Symb: apr
+__main__ 2023-10-24 13:06:26,851 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.22', 'inj': '12.4'}
+__main__ 2023-10-24 13:06:26,856 INFO I get APR <-> Cosmos Hub
+__main__ 2023-10-24 13:06:28,769 INFO Wait 2 sec
+__main__ 2023-10-24 13:06:35,812 INFO I get APR <-> Osmosis
+__main__ 2023-10-24 13:06:37,572 INFO Wait 2 sec
+__main__ 2023-10-24 13:06:42,562 INFO I get APR <-> Agoric
+__main__ 2023-10-24 13:06:44,891 INFO Wait 2 sec
+__main__ 2023-10-24 13:06:47,917 INFO I get APR <-> Akash
+__main__ 2023-10-24 13:06:50,322 INFO Wait 2 sec
+__main__ 2023-10-24 13:06:53,570 INFO I get APR <-> Axelar
+__main__ 2023-10-24 13:06:56,177 INFO Wait 2 sec
+__main__ 2023-10-24 13:06:59,067 INFO I get APR <-> Cronos Pos
+__main__ 2023-10-24 13:07:01,245 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:04,388 INFO I get APR <-> Evmos
+__main__ 2023-10-24 13:07:07,319 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:09,495 INFO I get APR <-> Gitopia
+__main__ 2023-10-24 13:07:11,621 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:14,847 INFO I get APR <-> Injective
+__main__ 2023-10-24 13:07:17,086 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:19,766 INFO I get APR <-> Irisnet
+__main__ 2023-10-24 13:07:22,030 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:24,206 INFO I get APR <-> Juno
+__main__ 2023-10-24 13:07:25,539 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:30,874 INFO I get APR <-> Kava
+__main__ 2023-10-24 13:07:33,328 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:36,531 INFO I get APR <-> Mars Hub
+__main__ 2023-10-24 13:07:39,049 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:41,723 INFO I get APR <-> Neutron
+__main__ 2023-10-24 13:07:43,758 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:45,898 INFO Neutron error
+__main__ 2023-10-24 13:07:45,912 INFO I get APR <-> Noble
+__main__ 2023-10-24 13:07:48,280 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:50,401 INFO Noble error
+__main__ 2023-10-24 13:07:50,412 INFO I get APR <-> Omniflix
+__main__ 2023-10-24 13:07:54,693 INFO Wait 2 sec
+__main__ 2023-10-24 13:07:56,977 INFO I get APR <-> Persistence
+__main__ 2023-10-24 13:07:59,446 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:02,237 INFO I get APR <-> Quasar
+__main__ 2023-10-24 13:08:05,995 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:08,191 INFO I get APR <-> Quicksilver
+__main__ 2023-10-24 13:08:10,600 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:14,076 INFO I get APR <-> Regen
+__main__ 2023-10-24 13:08:18,165 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:20,388 INFO I get APR <-> Secret Network
+__main__ 2023-10-24 13:08:22,800 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:26,467 INFO I get APR <-> Shentu
+__main__ 2023-10-24 13:08:28,012 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:32,541 INFO I get APR <-> Sommelier
+__main__ 2023-10-24 13:08:34,563 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:36,808 INFO I get APR <-> Stride
+__main__ 2023-10-24 13:08:38,968 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:42,201 INFO I get APR <-> Terra
+__main__ 2023-10-24 13:08:47,358 INFO Wait 2 sec
+__main__ 2023-10-24 13:08:49,585 INFO I get APR <-> Band
+__main__ 2023-10-24 13:08:51,671 INFO Wait 5
+__main__ 2023-10-24 13:08:56,942 INFO I get APR <-> Archway
+__main__ 2023-10-24 13:08:58,625 INFO Wait 5
+__main__ 2023-10-24 13:09:03,832 DEBUG TMP APR: {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.47, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:09:03,843 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.22', 'inj': '12.4'} {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.47, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:09:04,121 INFO Time work 192.55019211769104 sec
+__main__ 2023-10-24 13:09:04,130 INFO Wait 7 hour
+__main__ 2023-10-24 13:16:25,755 INFO Start APR monitoring
+__main__ 2023-10-24 13:16:29,802 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 13:16:29,806 INFO Symb: ing
+__main__ 2023-10-24 13:16:29,810 INFO Symb: arch
+__main__ 2023-10-24 13:16:32,451 INFO Wait 5
+__main__ 2023-10-24 13:16:37,625 INFO Get token: arch, price: 0.0518
+__main__ 2023-10-24 13:16:37,689 INFO Symb: band
+__main__ 2023-10-24 13:16:38,405 INFO Wait 5
+__main__ 2023-10-24 13:16:43,890 INFO Get token: band, price: 1.530
+__main__ 2023-10-24 13:16:43,969 INFO Symb: atom
+__main__ 2023-10-24 13:16:52,849 INFO Get token: ATOM, price: 7.17
+__main__ 2023-10-24 13:16:52,870 INFO Symb: inj
+__main__ 2023-10-24 13:16:58,297 INFO Get token: INJ, price: 12.2
+__main__ 2023-10-24 13:16:58,316 INFO Symb: apr
+__main__ 2023-10-24 13:16:58,573 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.17', 'inj': '12.2'}
+__main__ 2023-10-24 13:16:58,578 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.17', 'inj': '12.2'} {'Cosmos Hub': 19.15, 'Osmosis': 10.52, 'Agoric': 11.06, 'Akash': 9.87, 'Axelar': 18.36, 'Cronos Pos': 8.2, 'Evmos': 36.03, 'Gitopia': 28.5, 'Injective': 15.89, 'Irisnet': 10.33, 'Juno': 16.84, 'Kava': 20.37, 'Mars Hub': 25.71, 'Omniflix': 27.8, 'Persistence': 17.64, 'Quasar': 5.85, 'Quicksilver': 49.47, 'Regen': 25.73, 'Secret Network': 25.7, 'Shentu': 36.24, 'Sommelier': 8.95, 'Stride': 3.18, 'Terra': 16.21, 'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:16:58,834 INFO Time work 33.07874369621277 sec
+__main__ 2023-10-24 13:16:58,842 INFO Wait 7 hour
+__main__ 2023-10-24 13:19:32,610 INFO Start APR monitoring
+__main__ 2023-10-24 13:19:36,314 INFO Symbs :: ['ing', 'arch', 'band', 'atom', 'inj', 'apr']
+__main__ 2023-10-24 13:19:36,316 INFO Symb: ing
+__main__ 2023-10-24 13:19:36,319 INFO Symb: arch
+__main__ 2023-10-24 13:19:38,705 INFO Wait 5
+__main__ 2023-10-24 13:19:43,903 INFO Get token: arch, price: 0.0518
+__main__ 2023-10-24 13:19:43,997 INFO Symb: band
+__main__ 2023-10-24 13:19:46,394 INFO Wait 5
+__main__ 2023-10-24 13:19:51,798 INFO Get token: band, price: 1.530
+__main__ 2023-10-24 13:19:51,910 INFO Symb: atom
+__main__ 2023-10-24 13:20:00,722 INFO Get token: ATOM, price: 7.18
+__main__ 2023-10-24 13:20:00,734 INFO Symb: inj
+__main__ 2023-10-24 13:20:06,419 INFO Get token: INJ, price: 12.2
+__main__ 2023-10-24 13:20:06,434 INFO Symb: apr
+__main__ 2023-10-24 13:20:06,705 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.18', 'inj': '12.2'}
+__main__ 2023-10-24 13:20:06,709 INFO I get APR <-> Band
+__main__ 2023-10-24 13:20:08,488 INFO Wait 5
+__main__ 2023-10-24 13:20:13,645 INFO I get APR <-> Archway
+__main__ 2023-10-24 13:20:15,674 INFO Wait 5
+__main__ 2023-10-24 13:20:20,915 DEBUG TMP APR: {'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:20:20,935 INFO Get price token: {'arch': '0.0518', 'band': '1.530', 'atom': '7.18', 'inj': '12.2'} {'Band': 11.44, 'Archway': 19.35}
+__main__ 2023-10-24 13:20:21,255 INFO Time work 48.64480233192444 sec
+__main__ 2023-10-24 13:20:21,264 INFO Wait 7 hour

@@ -9,6 +9,7 @@ from WorkJson import WorkWithJson
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
+urls_kepler_json = WorkWithJson('network_price.json')
 
 
 log = logging.getLogger(__name__)
@@ -35,6 +36,7 @@ user_delegates = None
 
 async def process_network(name_network: dict, data: dict):
     id_log = data["id"]
+    data2 = urls_kepler_json.get_json()
     memo = MemeApi.MemeApi(id=id_log, network=name_network.get('name'))
 
     try: 
@@ -96,13 +98,13 @@ async def process_network(name_network: dict, data: dict):
                     continue
                 
                 amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')])
-                log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
+                log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")
 
                 userId = cache_users[id_network][memo_id][address]
                 memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
     except:
-        log.exception("ERROR Main")
+        log.exception("ERROR process_network")
 
 
 async def main():

@@ -32,7 +32,7 @@ log.addHandler(log_s)
 log.addHandler(log_f)
 
 
-def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, symbs: list):
+def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, symbs: list, data: dict):
     resul = dict()
 
     url = "https://wallet.keplr.app"
@@ -40,10 +40,8 @@ def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, s
     deployment_network = "/html/body/div/div/div[3]/div[2]/div/div/div[2]/div[1]/div[1]/div[2]/div[1]/div/button"
     url_element = "/html/body/div/div/div[3]/div[1]/div[3]/div[2]/div/div/div/div[1]/div[2]/div/span/span"
 
-    data = urls_kepler_json.get_json()
-
-
-    if data == {}:
+    if data['network_url'] == None:
+        data['network_url'] = {}
         log.info("Data == {}")
         
         driver.get(url)
@@ -73,7 +71,7 @@ def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, s
             if ' <' in token or not price.replace('.', '', 1).isdigit():
                 continue
             
-            data[network] = {"token": token, "url": href}
+            data['network_url'][network] = {"token": token, "url": href}
 
             log.info(f"Add {token} <-> {href}")
             
@@ -88,11 +86,11 @@ def get_url_network_Keplr(driver: webdriver.Chrome, driver2: webdriver.Chrome, s
     for symb in symbs:
         log.info(f"Symb: {symb}")
 
-        for network in  data:
-            if symb.upper() not in  data[network]['token']:
+        for network in  data['network_url']:
+            if symb.upper() not in  data['network_url'][network]['token']:
                 continue
 
-            element = get_price_token(driver=driver2, url=data[network]['url'])
+            element = get_price_token(driver=driver2, url=data['network_url'][network]['url'])
 
             token = element[1].split(' $')[0]
             price = element[-1].split(' $')[-1]
@@ -140,25 +138,24 @@ def get_price_token(driver: webdriver.Chrome, url: str = "https://wallet.keplr.a
 
     return [network.text.title(), price.text.split(' $')[0], price.text.split(' $')[-1]]
 
-def get_apr_keplr(driver: webdriver.Chrome):
+def get_apr_keplr(driver: webdriver.Chrome, data: dict):
     tmp = {}
-    data = urls_kepler_json.get_json()
-    data2 = work_json.get_json()
+    # data = urls_kepler_json.get_json()
 
-    for network in data:
-        log.info(f"I get APR <-> {network}")
-        path = '/html/body/div/div/div[3]/div[1]/div[3]/div[2]/div/div/div/div[1]/div[2]/p/span'
+    # for network in data['network_url']:
+    #     log.info(f"I get APR <-> {network}")
+    #     path = '/html/body/div/div/div[3]/div[1]/div[3]/div[2]/div/div/div/div[1]/div[2]/p/span'
 
-        driver.get(data[network]['url'])
-        log.info("Wait 2 sec")
-        time.sleep(2)
+    #     driver.get(data['network_url'][network]['url'])
+    #     log.info("Wait 2 sec")
+    #     time.sleep(2)
 
-        a = driver.find_element(By.XPATH, path)
-        if "-" in a.text[-6:-1]:
-            log.info(f"{network} error")
-            continue
+    #     a = driver.find_element(By.XPATH, path)
+    #     if "-" in a.text[-6:-1]:
+    #         log.info(f"{network} error")
+    #         continue
 
-        tmp[network] = float(a.text[-6:-1])
+    #     tmp[network] = float(a.text[-6:-1])
 
     if "Band" not in tmp:
         log.info(f"I get APR <-> Band")
@@ -199,6 +196,7 @@ def main():
             
             log.info("Start APR monitoring")
             data = work_json.get_json()
+            data2 = urls_kepler_json.get_json()
             memo = MemeApi.MemeApi(data["id"], "Get_APR")
 
             driver = webdriver.Remote(
@@ -214,14 +212,14 @@ def main():
             symbs = memo.Get_Available_Blockchains_Symbols()
             log.info(f"Symbs :: {symbs}")
 
-            resul = get_url_network_Keplr(driver=driver, driver2=driver2, symbs=symbs)
+            resul = get_url_network_Keplr(driver=driver, driver2=driver2, symbs=symbs, data=data2)
             memo.Update_Symbols_Price(data=resul)
             log.info(f"Get price token: {resul}")
             
-            data['APR'] = get_apr_keplr(driver) if config_toml['Update']['enable_chromeDriver'] else get_apr_math()
+            data2['APR'] = get_apr_keplr(driver, data2) if config_toml['Update']['enable_chromeDriver'] else get_apr_math()
             
             # get_validator_commision()
-            log.info(f"Get price token: {resul}")
+            log.info(f"Get price token: {resul} {data2['APR']}")
             
 
             driver2.quit()
@@ -234,7 +232,7 @@ def main():
     
 
 
-        work_json.set_json(data)
+        urls_kepler_json.set_json(data2)
         log.info(f"Time work {time.time() - start_time} sec")
         log.info(f"Wait {config_toml['Update']['time']} hour")
         time.sleep(config_toml['Update']['time'] * 60 * 60)
