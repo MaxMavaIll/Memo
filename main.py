@@ -9,7 +9,7 @@ from WorkJson import WorkWithJson
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
-urls_kepler_json = WorkWithJson('network_price.json')
+urls_kepler_json = WorkWithJson('Update/network_price.json')
 
 
 log = logging.getLogger(__name__)
