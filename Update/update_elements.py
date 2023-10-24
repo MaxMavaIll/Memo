@@ -140,22 +140,21 @@ def get_price_token(driver: webdriver.Chrome, url: str = "https://wallet.keplr.a
 
 def get_apr_keplr(driver: webdriver.Chrome, data: dict):
     tmp = {}
-    # data = urls_kepler_json.get_json()
 
-    # for network in data['network_url']:
-    #     log.info(f"I get APR <-> {network}")
-    #     path = '/html/body/div/div/div[3]/div[1]/div[3]/div[2]/div/div/div/div[1]/div[2]/p/span'
+    for network in data['network_url']:
+        log.info(f"I get APR <-> {network}")
+        path = '/html/body/div/div/div[3]/div[1]/div[3]/div[2]/div/div/div/div[1]/div[2]/p/span'
 
-    #     driver.get(data['network_url'][network]['url'])
-    #     log.info("Wait 2 sec")
-    #     time.sleep(2)
+        driver.get(data['network_url'][network]['url'])
+        log.info("Wait 2 sec")
+        time.sleep(2)
 
-    #     a = driver.find_element(By.XPATH, path)
-    #     if "-" in a.text[-6:-1]:
-    #         log.info(f"{network} error")
-    #         continue
+        a = driver.find_element(By.XPATH, path)
+        if "-" in a.text[-6:-1]:
+            log.info(f"{network} error")
+            continue
 
-    #     tmp[network] = float(a.text[-6:-1])
+        tmp[network] = float(a.text[-6:-1])
 
     if "Band" not in tmp:
         log.info(f"I get APR <-> Band")
