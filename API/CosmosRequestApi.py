@@ -183,13 +183,13 @@ class CosmosRequestApi():
         results = await asyncio.gather(*[self.Get_Memo_Address_With_Transaction(hash=hash) for hash in hashes])
             # data, full_data = await self.Get_Memo_Address_With_Transaction(hash=hash)
         for data, full_data, hash in results:
+            text_type_transaction = data['messages'][0]['@type'].split(".")[-1].upper()
             log.info(f"ID {self.id_log} | {self.network}  -> Hash: {hash} || Transaction: {text_type_transaction}")
 
             if full_data == {}:
                 log.warn(f"Пропуск блоку хеша: {hash}")
                 return cache_hashes
 
-            text_type_transaction = data['messages'][0]['@type'].split(".")[-1].upper()
 
             if text_type_transaction == "MSGDELEGATE":
                 
