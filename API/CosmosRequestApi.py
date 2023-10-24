@@ -174,61 +174,72 @@ class CosmosRequestApi():
         
         cache_hashes = {}
 
-        for hash in await self.Get_Hash_Transactions_Height(height=height):
+        # for hash in await self.Get_Hash_Transactions_Height(height=height):
+        hashes = await self.Get_Hash_Transactions_Height(height=height)
+
+        if hashes == []:
+            return cache_hashes
             
+        results = await asyncio.gather(*[self.Get_Memo_Address_With_Transaction(hash=hash) for hash in hashes])
+            # data, full_data = await self.Get_Memo_Address_With_Transaction(hash=hash)
+        data = results[0][0]
+        full_data = results[0][1]
+
+
+        if full_data == {}:
+            log.warn(f"Пропуск блоку хеша: {hash}")
+            return cache_hashes
+
+        text_type_transaction = data['messages'][0]['@type'].split(".")[-1].upper()
+
+        if text_type_transaction == "MSGDELEGATE":
+            # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
+            if data['messages'][0]['validator_address'] == self.valoper_address and \
+                full_data['tx_response']["code"] == 0:
             
-            # data, full_data = await asyncio.gather(*[self.Get_Memo_Address_With_Transaction(hash=hash) for hash in await self.Get_Hash_Transactions_Height(height=height)])
-            data, full_data = await self.Get_Memo_Address_With_Transaction(hash=hash)
-
-            if full_data == {}:
-                log.warn(f"Пропуск блоку хеша: {hash}")
-                continue
-
-            text_type_transaction = data['messages'][0]['@type'].split(".")[-1].upper()
-
-            if text_type_transaction == "MSGDELEGATE":
-                # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
-                if data['messages'][0]['validator_address'] != self.valoper_address or \
-                    full_data['tx_response']["code"] != 0:
-                    continue
-                
                 for wallet_type in wallet_types:
                     
-                    if data['memo'] != wallet_type.get('name'):
-                        continue
-
+                    if data['memo'] == wallet_type.get('name'):
                     
-                    amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
-                    time = full_data['tx_response']['timestamp']
+                        amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                        time = full_data['tx_response']['timestamp']
 
 
-                    cache_hashes[data['messages'][0]['delegator_address']] = {'memo': wallet_type.get('id'), 
-                                                                'typeId': transactions_types[0].get('id'), 
+                        cache_hashes[data['messages'][0]['delegator_address']] = {'memo': wallet_type.get('id'), 
+                                                                    'typeId': transactions_types[0].get('id'), 
+                                                                    'amount': amount,
+                                                                    'hash': hash,
+                                                                    'time': time
+                                                                    }
+                
+        elif text_type_transaction in ["MSGUNDELEGATE", "MSGBEGINREDELEGATE"]:
+            if text_type_transaction == "MSGUNDELEGATE":
+                if data['messages'][0]['validator_address'] == self.valoper_address and \
+                    full_data['tx_response']["code"] == 0:
+                    for memo_id in  address_user:
+                        if data['messages'][0]['delegator_address'] in address_user[memo_id]:
+
+                            amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                            time = full_data['tx_response']['timestamp']
+                            cache_hashes[data['messages'][0]['delegator_address']] = {
+                                                                'memo': memo_id,
+                                                                'typeId': transactions_types[1].get('id'), 
                                                                 'amount': amount,
                                                                 'hash': hash,
                                                                 'time': time
                                                                 }
                     
-            elif text_type_transaction in ["MSGUNDELEGATE", "MSGBEGINREDELEGATE"]:
-                if text_type_transaction == "MSGUNDELEGATE":
-                    if data['messages'][0]['validator_address'] != self.valoper_address or \
-                        full_data['tx_response']["code"] != 0:
-                        continue
 
-                elif text_type_transaction == "MSGBEGINREDELEGATE":
-                    if data['messages'][0]['validator_src_address'] != self.valoper_address or \
-                        full_data['tx_response']["code"] != 0:
-                        continue
+            elif text_type_transaction == "MSGBEGINREDELEGATE":
+                if data['messages'][0]['validator_src_address'] == self.valoper_address and \
+                    full_data['tx_response']["code"] == 0:
                     
+                    for memo_id in  address_user:
+                        if data['messages'][0]['delegator_address'] in address_user[memo_id]:
 
-                    
-                for memo_id in  address_user:
-                    if data['messages'][0]['delegator_address'] not in address_user[memo_id]:
-                        continue
-
-                    amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
-                    time = full_data['tx_response']['timestamp']
-                    cache_hashes[data['messages'][0]['delegator_address']] = {
+                            amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                            time = full_data['tx_response']['timestamp']
+                            cache_hashes[data['messages'][0]['delegator_address']] = {
                                                                 'memo': memo_id,
                                                                 'typeId': transactions_types[1].get('id'), 
                                                                 'amount': amount,
