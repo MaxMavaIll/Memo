@@ -3,5 +3,4 @@ config.toml
 out.json
 test.py
 __pycache__/
-logs/
 Update/network_price.json
