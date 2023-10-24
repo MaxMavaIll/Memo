@@ -1,4 +1,5 @@
 import logging, toml, time, asyncio
+from datetime import datetime
 
 from logging.handlers import RotatingFileHandler
 from function import * 
@@ -32,8 +33,7 @@ log.addHandler(log_f)
 cache_users = None
 user_delegates = None
 
-async def process_network(name_network: dict):
-    data = work_json.get_json()
+async def process_network(name_network: dict, data: dict):
     id_log = data["id"]
     memo = MemeApi.MemeApi(id=id_log, network=name_network.get('name'))
 
@@ -47,8 +47,8 @@ async def process_network(name_network: dict):
             network=name_network.get("name")
         )
         # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
-        transactions_type = memo.Get_Available_Transaction_Types()
-        wallet_type = memo.Get_Available_Wallet_Types()
+        transactions_type = await memo.Get_Available_Transaction_Types()
+        wallet_type = await memo.Get_Available_Wallet_Types()
 
        
         if id_network not in cache_users:
@@ -57,7 +57,7 @@ async def process_network(name_network: dict):
         if id_network not in user_delegates:
             user_delegates[id_network] = {}
 
-        data_memo_address_time = cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network])
+        data_memo_address_time = await cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network], settings_json=data)
 
         for height in data_memo_address_time:
             for address in data_memo_address_time[height]:
@@ -88,7 +88,8 @@ async def process_network(name_network: dict):
                                         executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
                                         hash=data_memo_address_time[height][address]['hash']
                                         )
-
+                
+        # if data["last_completion_time"] == None:
         for memo_id in cache_users[id_network]:
             for address in cache_users[id_network][memo_id]:
                 if user_delegates[id_network][memo_id][address] == 0:
@@ -127,11 +128,12 @@ async def main():
                 change_blockchain.append(blockchain)
         
         log.info(change_blockchain)
+        
 
-        tasks = [process_network(name_network) for name_network in change_blockchain]
+        tasks = [process_network(name_network, data) for name_network in change_blockchain]
         await asyncio.gather(*tasks)
         
-        data = work_json.get_json()
+        # data["last_completion_time"] = datetime.now()
         data["id"] += 1
         work_json.set_json(data=data)
         log.info(f"Time work: {time.time() - star_time:.4f}")

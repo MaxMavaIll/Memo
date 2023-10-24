@@ -13,7 +13,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
-urls_kepler_json = WorkWithJson('Update/network_price.json')
+urls_kepler_json = WorkWithJson('network_price.json')
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -169,7 +169,7 @@ def get_apr_keplr(driver: webdriver.Chrome):
         time.sleep(5)
         a = driver.find_element(By.XPATH, path_integer)
 
-        tmp["Band"] = a.text.strip("%")
+        tmp["Band"] =  float(a.text.strip("%"))
 
     if "Archway" not in tmp:
         log.info(f"I get APR <-> Archway")
@@ -178,7 +178,7 @@ def get_apr_keplr(driver: webdriver.Chrome):
         log.info(f"Wait 5")
         time.sleep(5)
         a = driver.find_element(By.XPATH, path_integer)
-        tmp["Archway"] = a.text.strip("%")
+        tmp["Archway"] =  float(a.text.strip("%"))
         
     
     log.debug(f"TMP APR: {tmp}")
@@ -212,6 +212,8 @@ def main():
             )
 
             symbs = memo.Get_Available_Blockchains_Symbols()
+            log.info(f"Symbs :: {symbs}")
+
             resul = get_url_network_Keplr(driver=driver, driver2=driver2, symbs=symbs)
             memo.Update_Symbols_Price(data=resul)
             log.info(f"Get price token: {resul}")

@@ -63,7 +63,7 @@ class MemeApi():
             log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
 
-    def Get_Available_Wallet_Types(self) -> list(dict()):
+    async def Get_Available_Wallet_Types(self) -> list(dict()):
         log.info(f"{self.id_log} | {self.network}  -> #--Get_Available_Wallet_Types--#")
         answer = requests.get(f"{self.HOSTNAME}/api/transactions/marks")
 
@@ -77,7 +77,7 @@ class MemeApi():
             log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
 
-    def Get_Available_Transaction_Types(self) -> list():
+    async def Get_Available_Transaction_Types(self) -> list():
         log.info(f"{self.id_log} | {self.network}  -> #--Get_Available_Transaction_Types--#")
         answer = requests.get(f"{self.HOSTNAME}/api/transactions/types")
 

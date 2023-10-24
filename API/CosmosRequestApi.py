@@ -1,4 +1,4 @@
-import requests, logging, toml, json
+import requests, logging, toml, json, aiohttp, asyncio
 from logging.handlers import RotatingFileHandler
 from WorkJson import WorkWithJson
 
@@ -131,45 +131,40 @@ class CosmosRequestApi():
                 log.error(f"Fail, I get {answer.status_code}")
                 log.error(f"Answer with server: {answer.text}")
     
-    def Get_Memo_Address_With_Transaction(
-            self,
-            hash: str
-    ) -> dict:
+    async def Get_Memo_Address_With_Transaction(self, hash: str) -> dict:
         log.info(f"ID {self.id_log} | {self.network}  -> Get info with Hash user :: {hash}")
 
-        answer = requests.get(f"{self.rest}/cosmos/tx/v1beta1/txs/{hash}")
-
-        if answer.status_code == 200:
-            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
-            return data['tx']['body'], data
+        url = f"{self.rest}/cosmos/tx/v1beta1/txs/{hash}"
         
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
-            return {}, {}
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
+                    data = await response.json()
+                    return data['tx']['body'], data
+                else:
+                    log.error(f"Fail, I get {response.status}")
+                    log.error(f"Answer with server: {await response.text()}")
+                    return {}, {}
   
-    def Get_Hash_Transactions_Height(
-            self,
-            height: int
-    ) -> list:
-        log.info(f"ID {self.id_log} | {self.network}  -> Get bock hashes")
-        
-        answer = requests.get(f"{self.rpc}/tx_search?query=\"tx.height={height}\"")
+    async def Get_Hash_Transactions_Height(self, height: int) -> list:
+        log.info(f"ID {self.id_log} | {self.network}  -> Get block hashes")
 
-        if answer.status_code == 200:
-            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
-            log.info(f"ID {self.id_log} | {self.network}  -> Total hash {len([tmp['hash'] for tmp in data['result']['txs']])}")
-            return [tmp['hash'] for tmp in data['result']['txs']]
+        url = f"{self.rpc}/tx_search?query=\"tx.height={height}\""
         
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
+                    data = await response.json()
+                    log.info(f"ID {self.id_log} | {self.network}  -> Total hash {len(data['result']['txs'])}")
+                    return [tmp['hash'] for tmp in data['result']['txs']]
+                else:
+                    log.error(f"Fail, I get {response.status}")
+                    log.error(f"Answer with server: {await response.text()}")
+                    return []
 
-    def Get_Memo(
+    async def Get_Memo(
             self,
             height: int,
             transactions_types: dict,
@@ -179,10 +174,11 @@ class CosmosRequestApi():
         
         cache_hashes = {}
 
-        for hash in self.Get_Hash_Transactions_Height(height=height):
+        for hash in await self.Get_Hash_Transactions_Height(height=height):
             
             
-            data, full_data = self.Get_Memo_Address_With_Transaction(hash=hash)
+            # data, full_data = await asyncio.gather(*[self.Get_Memo_Address_With_Transaction(hash=hash) for hash in await self.Get_Hash_Transactions_Height(height=height)])
+            data, full_data = await self.Get_Memo_Address_With_Transaction(hash=hash)
 
             if full_data == {}:
                 log.warn(f"Пропуск блоку хеша: {hash}")
@@ -242,34 +238,36 @@ class CosmosRequestApi():
 
         return cache_hashes
 
-    def get_height(self) -> int:
+    async def get_height(self) -> int:
+        log.info(f"ID {self.id_log} | {self.network}  -> Status")
+        url = f"{self.rpc}/status"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
+                    data = await response.json()
+                    return int(data['result']['sync_info']['latest_block_height'])
+                else:
+                    log.error(f"Fail, I get {response.status}")
+                    log.error(f"Answer with server: {await response.text()}")
+                    return 0  # Повертати значення за замовчуванням або інше значення за необхідності
 
-        answer = requests.get(f"{self.rpc}/status")
-        if answer.status_code == 200:
-            log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
-            return int(data['result']['sync_info']['latest_block_height'])
-
-        else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
-
-    def Get_Block_Memo(
+    async def Get_Block_Memo(
             self,
             transactions_type: dict,
             wallet_type: dict,
-            address_user: dict
+            address_user: dict,
+            settings_json: dict
     ) -> dict:
         try:
-            settings_json = work_json.get_json()
-            last_height_network = self.get_height()
+            last_height_network = await self.get_height()
             cache_hashes = {}
-            
-            
             
             if settings_json['last_height'] == None:
                 settings_json['last_height'] = {}
+            
+            if self.network not in settings_json['last_height']:
                 settings_json['last_height'][self.network] = last_height_network
             
             
@@ -279,12 +277,11 @@ class CosmosRequestApi():
             for tmp_height in range(height, last_height_network):
                 
                 log.info(f"ID {self.id_log} | {self.network}  -> \n\nHeight: {tmp_height} - {last_height_network}\n")
-                memo = self.Get_Memo(tmp_height, transactions_types=transactions_type, wallet_types=wallet_type, address_user=address_user)
+                memo = await self.Get_Memo(tmp_height, transactions_types=transactions_type, wallet_types=wallet_type, address_user=address_user)
                 if memo != {}:
                     cache_hashes[tmp_height] = memo
 
             settings_json['last_height'][self.network] = last_height_network
-            work_json.set_json(settings_json)
             return cache_hashes
         
         except:
