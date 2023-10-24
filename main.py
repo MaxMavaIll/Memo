@@ -97,7 +97,7 @@ async def process_network(name_network: dict, data: dict):
                 if user_delegates[id_network][memo_id][address] == 0:
                     continue
                 
-                amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')])
+                amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data2["APR"][name_network.get('name')])
                 log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")
 
                 userId = cache_users[id_network][memo_id][address]
