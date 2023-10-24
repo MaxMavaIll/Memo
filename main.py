@@ -61,6 +61,7 @@ async def process_network(name_network: dict, data: dict):
 
         data_memo_address_time = await cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network], settings_json=data)
 
+        log.info(f"{id_log} | {name_network.get('name')}  ->  New info {data_memo_address_time}")
         for height in data_memo_address_time:
             for address in data_memo_address_time[height]:
                 memo_id = str(data_memo_address_time[height][address]["memo"])
