@@ -96,11 +96,13 @@ async def process_network(name_network: dict, data: dict, urls_kepler_json: dict
                                         )
                 
         # if data["last_completion_time"] == None:
+        log.info(f"\n\n{id_log} | {name_network.get('name')}  -> REWARDS")
         for memo_id in cache_users[id_network]:
+            log.info(f"\n\n{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
             for address in cache_users[id_network][memo_id]:
                 if user_delegates[id_network][memo_id][address] == 0:
                     continue
-                
+                log.info(f"{id_log} | {name_network.get('name')}  ->")
                 amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data2["APR"][name_network.get('name')])
                 log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")
 
