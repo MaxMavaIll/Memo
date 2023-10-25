@@ -207,7 +207,7 @@ class CosmosRequestApi():
                     if data['memo'] != wallet_type.get('name'):
                         continue
                     
-                    amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                    amount = f"{int(data['messages'][0]['amount']['amount']) / (10 ** config_toml['network'][self.network]['token_zero']):.8f}"
                     time = full_data['tx_response']['timestamp']
 
                     log.info(f"ID {self.id_log} | {self.network} -> WRITE DELEGATE {hash} with MEMO: {data['memo']}")
@@ -233,7 +233,7 @@ class CosmosRequestApi():
                         if data['messages'][0]['delegator_address'] not in address_user[memo_id]:
                             continue
 
-                        amount = f"{int(data['messages'][0]['amount']['amount']) / 1000000:.8f}"
+                        amount = f"{int(data['messages'][0]['amount']['amount']) / (10 ** config_toml['network'][self.network]['token_zero']):.8f}"
                         time = full_data['tx_response']['timestamp']
                         cache_hashes[data['messages'][0]['delegator_address']] = {
                                                             'memo': memo_id,
