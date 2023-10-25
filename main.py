@@ -96,9 +96,9 @@ async def process_network(name_network: dict, data: dict, urls_kepler_json: dict
                                         )
                 
         # if data["last_completion_time"] == None:
-        log.info(f"\n\n{id_log} | {name_network.get('name')}  -> REWARDS")
+        log.info(f"\n{id_log} | {name_network.get('name')}  -> REWARDS")
         for memo_id in cache_users[id_network]:
-            log.info(f"\n\n{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+            log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
             for address in cache_users[id_network][memo_id]:
                 if user_delegates[id_network][memo_id][address] == 0:
                     continue
@@ -108,7 +108,6 @@ async def process_network(name_network: dict, data: dict, urls_kepler_json: dict
 
                 userId = cache_users[id_network][memo_id][address]
                 memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
-
     except:
         log.exception("ERROR process_network")
 
@@ -145,7 +144,7 @@ async def main():
         data["id"] += 1
         work_json.set_json(data=data)
         log.info(f"Time work: {time.time() - star_time:.4f}")
-        log.info(f"wait {config_toml['time_update'] } min")
+        log.info(f"wait {config_toml['time_update'] } min\n\n")
         time.sleep(config_toml['time_update'] * 60)
         
 
