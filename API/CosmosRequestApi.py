@@ -194,7 +194,7 @@ class CosmosRequestApi():
             if text_type_transaction == "MSGDELEGATE":
                 
                 # a = data['messages'][0]['@type'][-len(transactions_type.get('name')):].upper()
-                log.info(f"ID {self.id_log} | {self.network} -> MSGDELEGATE, {data['messages'][0]['validator_address']}, {full_data['tx_response']['code']}")
+                log.info(f"ID {self.id_log} | {self.network} -> DELEGATE, {data['messages'][0]['validator_address']}, {full_data['tx_response']['code']}")
                 if data['messages'][0]['validator_address'] != self.valoper_address or \
                     full_data['tx_response']["code"] != 0:
                     continue
@@ -220,28 +220,33 @@ class CosmosRequestApi():
                 
             elif text_type_transaction in ["MSGUNDELEGATE", "MSGBEGINREDELEGATE"]:
                 if text_type_transaction == "MSGUNDELEGATE":
+                    log.info(f"ID {self.id_log} | {self.network} -> UNDELEGATE, {data['messages'][0]['validator_address']}, {full_data['tx_response']['code']}")
+
                     if data['messages'][0]['validator_address'] != self.valoper_address or \
                         full_data['tx_response']["code"] != 0:
                         continue
 
                 elif text_type_transaction == "MSGBEGINREDELEGATE":
+                    log.info(f"ID {self.id_log} | {self.network} -> BEGINREDELEGATE, {data['messages'][0]['validator_src_address']}, {full_data['tx_response']['code']}")
+                    
                     if data['messages'][0]['validator_src_address'] != self.valoper_address or \
                         full_data['tx_response']["code"] != 0:
                         continue
                         
-                    for memo_id in  address_user:
-                        if data['messages'][0]['delegator_address'] not in address_user[memo_id]:
-                            continue
+                for memo_id in  address_user:
+                    log.info(f"Address user: {data['messages'][0]['delegator_address']} || User cache: {address_user[memo_id]}")
+                    if data['messages'][0]['delegator_address'] not in address_user[memo_id]:
+                        continue
 
-                        amount = f"{int(data['messages'][0]['amount']['amount']) / (10 ** config_toml['network'][self.network]['token_zero']):.8f}"
-                        time = full_data['tx_response']['timestamp']
-                        cache_hashes[data['messages'][0]['delegator_address']] = {
-                                                            'memo': memo_id,
-                                                            'typeId': transactions_types[1].get('id'), 
-                                                            'amount': amount,
-                                                            'hash': hash,
-                                                            'time': time
-                                                            }
+                    amount = f"{int(data['messages'][0]['amount']['amount']) / (10 ** config_toml['network'][self.network]['token_zero']):.8f}"
+                    time = full_data['tx_response']['timestamp']
+                    cache_hashes[data['messages'][0]['delegator_address']] = {
+                                                        'memo': memo_id,
+                                                        'typeId': transactions_types[1].get('id'), 
+                                                        'amount': amount,
+                                                        'hash': hash,
+                                                        'time': time
+                                                        }
 
         return cache_hashes
 
