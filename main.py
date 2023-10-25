@@ -9,7 +9,7 @@ from WorkJson import WorkWithJson
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
-urls_kepler_json = WorkWithJson('Update/network_price.json')
+
 
 
 log = logging.getLogger(__name__)
@@ -34,7 +34,8 @@ log.addHandler(log_f)
 cache_users = None
 user_delegates = None
 
-async def process_network(name_network: dict, data: dict):
+async def process_network(name_network: dict, data: dict, urls_kepler_json: dict):
+
     id_log = data["id"]
     data2 = urls_kepler_json.get_json()
     memo = MemeApi.MemeApi(id=id_log, network=name_network.get('name'))
@@ -118,7 +119,7 @@ async def main():
 
     while True:
         log.info("Start")
-        
+        urls_kepler_json = WorkWithJson('Update/network_price.json')
         star_time = time.time()
         change_blockchain = []
 
@@ -135,7 +136,7 @@ async def main():
         log.info(change_blockchain)
         
 
-        tasks = [process_network(name_network, data) for name_network in change_blockchain]
+        tasks = [process_network(name_network, data, urls_kepler_json) for name_network in change_blockchain]
         await asyncio.gather(*tasks)
         
         # data["last_completion_time"] = datetime.now()
