@@ -152,8 +152,8 @@ async def main():
         log.debug(change_blockchain)
         
 
-        # tasks = [process_network(name_network, data) for name_network in change_blockchain]
-        # await asyncio.gather(*tasks)
+        tasks = [process_network(name_network, data) for name_network in change_blockchain]
+        await asyncio.gather(*tasks)
 
         if data['last_completion_time'] != None:
             last_time = datetime.fromisoformat(data['last_completion_time'])
