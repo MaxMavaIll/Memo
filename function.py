@@ -34,7 +34,7 @@ def to_tmpstmp_mc(
     return timestamp_ms
 
 
-def get_APR_from(
+async def get_APR_from(
         amountDelegated: int, 
         APR: float
         ) -> str:

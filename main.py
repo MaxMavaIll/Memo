@@ -34,14 +34,17 @@ log.addHandler(log_f)
 cache_users = None
 user_delegates = None
 
-async def process_network(name_network: dict, data: dict, urls_kepler_json: dict):
+async def process_network(
+        name_network: dict, 
+        data: dict
+        ):
 
     id_log = data["id"]
-    data2 = urls_kepler_json.get_json()
     memo = MemeApi.MemeApi(id=id_log, network=name_network.get('name'))
 
     try: 
         id_network = str(name_network.get('id'))
+
         cosmos = CosmosRequestApi.CosmosRequestApi(
             rest=config_toml['network'][name_network.get('name')]['rest'],
             rpc=config_toml['network'][name_network.get('name')]['rpc'],
@@ -49,10 +52,10 @@ async def process_network(name_network: dict, data: dict, urls_kepler_json: dict
             id=id_log,
             network=name_network.get("name")
         )
-        # APR = update_APR(cosmos.Get_All_Rewards(config_toml['network'][name_network.get('name')]['address']))
+
         transactions_type = await memo.Get_Available_Transaction_Types()
         wallet_type = await memo.Get_Available_Wallet_Types()
-
+        log.info(f"{id_log} | {name_network.get('name')}  ->  Wallet_type ")
        
         if id_network not in cache_users:
             cache_users[id_network] = {}
@@ -95,21 +98,30 @@ async def process_network(name_network: dict, data: dict, urls_kepler_json: dict
                                         hash=data_memo_address_time[height][address]['hash']
                                         )
                 
-        # if data["last_completion_time"] == None:
-        log.info(f"\n{id_log} | {name_network.get('name')}  -> REWARDS")
-        for memo_id in cache_users[id_network]:
-            log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
-            for address in cache_users[id_network][memo_id]:
-                if user_delegates[id_network][memo_id][address] == 0:
-                    continue
-                log.info(f"{id_log} | {name_network.get('name')}  ->")
-                amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data2["APR"][name_network.get('name')])
-                log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")
-
-                userId = cache_users[id_network][memo_id][address]
-                memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
     except:
         log.exception("ERROR process_network")
+
+async def process_reward(
+        memo: MemeApi.MemeApi,
+        user_delegates_all: int,
+        data: dict,
+        id_log: int,
+        memo_id: str,
+        name_network: dict,
+        address: str
+
+):
+    id_network = str(name_network.get('id'))
+    
+    if user_delegates_all == 0:
+        return
+    
+    amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')])
+    log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: id {name_network.get('id')} ")
+    log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
+
+    userId = cache_users[id_network][memo_id][address]
+    # await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
 
 async def main():
@@ -121,6 +133,8 @@ async def main():
     while True:
         log.info("Start")
         urls_kepler_json = WorkWithJson('Update/network_price.json')
+        data2 = urls_kepler_json.get_json()
+
         star_time = time.time()
         change_blockchain = []
 
@@ -134,13 +148,25 @@ async def main():
             if config_toml['network']['isMainnet'] == blockchain.get('isMainnet'):
                 change_blockchain.append(blockchain)
         
-        log.info(change_blockchain)
+        log.debug(change_blockchain)
         
 
-        tasks = [process_network(name_network, data, urls_kepler_json) for name_network in change_blockchain]
+        tasks = [process_network(name_network, data) for name_network in change_blockchain]
         await asyncio.gather(*tasks)
+
+        for name_network in change_blockchain:
+            for id_network in cache_users:
+                if str(name_network.get('id')) != id_network:
+                    continue
+                log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
+                for memo_id in cache_users[id_network]:
+                    log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+                    
+                    tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
+                                            id_log=id_log, memo_id=memo_id, name_network=name_network, address=address) for address in cache_users[id_network][memo_id]]
+                    
+                    await asyncio.gather(*tasks)
         
-        # data["last_completion_time"] = datetime.now()
         data["id"] += 1
         work_json.set_json(data=data)
         log.info(f"Time work: {time.time() - star_time:.4f}")

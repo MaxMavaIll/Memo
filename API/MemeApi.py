@@ -1,3 +1,4 @@
+import aiohttp
 import requests, logging, toml, json
 from logging.handlers import RotatingFileHandler
 
@@ -182,34 +183,27 @@ class MemeApi():
             log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
             log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
-    def Update_User_Stats(
-            self, 
-            userId: int, 
-            amountUserRewards: str,
-            amountValidatorRewards: str
-            ):
+    async def Update_User_Stats(self, userId: int, amountUserRewards: str, amountValidatorRewards: str):
         log.info(f"{self.id_log} | {self.network}  -> #--Update--#")
 
         payload = json.dumps({
-        "userId": userId,
-        "amountUserRewards": amountUserRewards,
-        "amountValidatorRewards": amountValidatorRewards
+            "userId": userId,
+            "amountUserRewards": amountUserRewards,
+            "amountValidatorRewards": amountValidatorRewards
         })
 
         headers = {
-        'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         }
 
-        answer = requests.patch(f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload)
-
-
-        if answer.status_code == 200:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
-            log.debug(answer.text)
-        
-        else:
-            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
-            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
+        async with aiohttp.ClientSession() as session:
+            async with session.patch(f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload) as response:
+                if response.status == 200:
+                    log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+                    log.debug(await response.text())
+                else:
+                    log.error(f"{self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"{self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
 
     def Update_Symbols_Price(
             self, 
