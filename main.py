@@ -124,7 +124,7 @@ async def process_reward(
     log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
 
     userId = cache_users[id_network][memo_id][address]
-    # await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+    await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
 
 async def main():
