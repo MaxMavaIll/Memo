@@ -1,4 +1,5 @@
 import logging, toml
+import aiohttp
 
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
@@ -45,5 +46,27 @@ async def get_APR_from(
 
     return f"{float(reward) - float(reward) * 0.02:.10f}", f"{float(reward) * 0.02:.10f}" # amountDelegated * ( APR / 100 ) / minute
 
-
-
+async def check_rpc(
+        network: dict,
+        name_network: str,
+        id_log: int,
+        settings: dict
+):
+    if type(dict()) != type(network):
+        return
+    
+    url = f"{network['rpc']}/status"
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                log.info(f"ID {id_log} -> {network['rpc']} 200")
+                data = await response.json()
+                if data["result"]["sync_info"]["catching_up"] == True:
+                    log.info(f"ID {id_log} -> {name_network} not already")
+                    del settings['network'][name_network]
+                log.info(f"ID {id_log} -> {name_network} already")
+            else:
+                log.error(f"ID {id_log} -> {network['rpc']} {response.status}")
+                del settings['network'][name_network]
+                

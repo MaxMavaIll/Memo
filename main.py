@@ -1,4 +1,4 @@
-import logging, toml, time, asyncio
+import logging, toml, time, asyncio, copy
 from datetime import datetime
 
 from logging.handlers import RotatingFileHandler
@@ -36,7 +36,10 @@ user_delegates = None
 
 async def process_network(
         name_network: dict, 
-        data: dict
+        data: dict,
+        transactions_type: list,
+        wallet_type: list,
+        settings: dict
         ):
 
     id_log = data["id"]
@@ -44,17 +47,16 @@ async def process_network(
 
     try: 
         id_network = str(name_network.get('id'))
+        
 
         cosmos = CosmosRequestApi.CosmosRequestApi(
-            rest=config_toml['network'][name_network.get('name')]['rest'],
-            rpc=config_toml['network'][name_network.get('name')]['rpc'],
-            valoper_address=config_toml['network'][name_network.get('name')]['valoper_address'],
+            rest=settings['network'][name_network.get('name')]['rest'],
+            rpc=settings['network'][name_network.get('name')]['rpc'],
+            valoper_address=settings['network'][name_network.get('name')]['valoper_address'],
             id=id_log,
             network=name_network.get("name")
         )
 
-        transactions_type = await memo.Get_Available_Transaction_Types()
-        wallet_type = await memo.Get_Available_Wallet_Types()
         log.info(f"{id_log} | {name_network.get('name')}  ->  Wallet_type ")
        
         if id_network not in cache_users:
@@ -122,7 +124,7 @@ async def process_reward(
     log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
 
     userId = cache_users[id_network][memo_id][address]
-    await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+    # await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
 
 async def main():
@@ -135,6 +137,13 @@ async def main():
         log.info("Start")
         urls_kepler_json = WorkWithJson('Update/network_price.json')
         data2 = urls_kepler_json.get_json()
+        settings = copy.deepcopy(config_toml)
+
+        # Провірка RPC
+        tasks = [check_rpc(settings["network"][network], network, id_log, settings) for network in settings['network']]
+        await asyncio.gather(*tasks)
+        
+        log.info(config_toml)
 
         star_time = time.time()
         change_blockchain = []
@@ -146,15 +155,19 @@ async def main():
             user_delegates = memo.Get_Users_Delegated_Amounts()
 
         for blockchain in memo.Get_Available_Blockchains_Types():
-            if config_toml['network']['isMainnet'] == blockchain.get('isMainnet'):
+            if settings['network']['isMainnet'] == blockchain.get('isMainnet'):
                 change_blockchain.append(blockchain)
         
+        transactions_type = await memo.Get_Available_Transaction_Types()
+        wallet_type = await memo.Get_Available_Wallet_Types()
         log.debug(change_blockchain)
         
-
-        tasks = [process_network(name_network, data) for name_network in change_blockchain]
+        # Запуск моніторингу мереж
+        tasks = [process_network(name_network, data, transactions_type, wallet_type, settings) for name_network in change_blockchain]
         await asyncio.gather(*tasks)
 
+
+        # Запуск обраховування Rewards
         if data['last_completion_time'] != None:
             last_time = datetime.fromisoformat(data['last_completion_time'])
             now_time = datetime.now()
@@ -171,15 +184,14 @@ async def main():
                         
                         tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
                                                 id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
-                        
                         await asyncio.gather(*tasks)
 
         data["last_completion_time"] = datetime.now().isoformat()
         data["id"] += 1
         work_json.set_json(data=data)
         log.info(f"Time work: {time.time() - star_time:.4f}")
-        log.info(f"wait {config_toml['time_update'] } min\n\n")
-        time.sleep(config_toml['time_update'] * 60)
+        log.info(f"wait {settings['time_update'] } min\n\n")
+        time.sleep(settings['time_update'] * 60)
         
 
 
