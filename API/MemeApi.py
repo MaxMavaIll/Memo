@@ -119,7 +119,7 @@ class MemeApi():
             log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
             log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")      
 
-    def Add_New_User(
+    async def Add_New_User(
             self, 
             address: str, 
             walletType: int, 
@@ -127,29 +127,38 @@ class MemeApi():
             ) -> int:
         log.info(f"{self.id_log} | {self.network}  -> #--Add_New_User--#")
 
-        payload = json.dumps({
+        payload = {
             "address": address,
-            "walletType": walletType,
+            "transactionMarkId": walletType,
             "blockchain": blockchain
-            })
+        }
         
         headers = {
             'Content-Type': 'application/json'
-            }
-        
+        }
+
         log.debug(payload)
 
-        answer = requests.post(f"{self.HOSTNAME}/api/users", headers=headers, data=payload)
+        # answer = requests.post(f"{self.HOSTNAME}/api/users", headers=headers, data=payload)
 
-        if answer.status_code == 201:
-            log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
-            log.debug(answer.text)
-            data = json.loads(answer.text)
-            return data.get('id')
-        
-        else:
-            log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
-            log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.HOSTNAME}/api/users", headers=headers, data=json.dumps(payload)) as response:
+                if response.status == 201:
+                    log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+                    log.debug(await response.text())
+                    log.debug(payload)
+                    data = await response.json()
+                    return data.get('id')
+                
+                else:
+                    log.error(f"{self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"{self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
+
+
+
+
+
+
 
     def Add_New_Transactions(
             self, 
@@ -157,15 +166,17 @@ class MemeApi():
             typeId: int, 
             amount: str,
             executedAt: str,
-            hash: str
+            hash: str,
+            transactionMark: str|None
             ):
-        log.info(f"{self.id_log} | {self.network}  -> #--Add_New_User--#")
+        log.info(f"{self.id_log} | {self.network}  -> #--Add_New_Transactions--#")
         payload = json.dumps({
             "userId": userId,
             "typeId": typeId,
             "amount": amount,
             "executedAt": executedAt,
-            "hash": hash
+            "hash": hash,
+            "transactionMark": transactionMark
             })
         
         headers = {
@@ -177,6 +188,7 @@ class MemeApi():
 
         if answer.status_code == 201:
             log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
+            log.debug(payload)
             log.debug(answer.text)
         
         else:

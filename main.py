@@ -77,27 +77,33 @@ async def process_network(
                 
                 if memo_id not in  user_delegates[id_network]:
                     user_delegates[id_network][memo_id] = {}
-                
 
-                if address not in cache_users[id_network][memo_id]:
+                memo_id, delegate_answer, answer = check_existing_memo(cache_users, id_network, address, memo_id)
+                log.info(f"{memo_id}, {delegate_answer}, {answer}")
+                if answer:
                     log.info(f"{id_log} | {name_network.get('name')}  ->  Add new user with: {address}")
-                    userId = memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
+                    userId = await memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
                     cache_users[id_network][memo_id][address] = userId
                     user_delegates[id_network][memo_id][address] = 0
 
-                if data_memo_address_time[height][address]['typeId'] == 1:
-                    user_delegates[id_network][memo_id][address] += float(data_memo_address_time[height][address]['amount'])
-                elif data_memo_address_time[height][address]['typeId'] == 2 and user_delegates[id_network][memo_id][address] >= float(data_memo_address_time[height][address]['amount']):
-                    user_delegates[id_network][memo_id][address] -= float(data_memo_address_time[height][address]['amount'])
-                else:
-                    user_delegates[id_network][memo_id][address] = 0
+                if delegate_answer:
+                    if data_memo_address_time[height][address]['typeId'] == 1:
+                        log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} Delegate: {data_memo_address_time[height][address]['amount']}")
+                        user_delegates[id_network][memo_id][address] += float(data_memo_address_time[height][address]['amount'])
+                    elif data_memo_address_time[height][address]['typeId'] == 2 and user_delegates[id_network][memo_id][address] >= float(data_memo_address_time[height][address]['amount']):
+                        log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} UnDelegate: {data_memo_address_time[height][address]['amount']}")
+                        user_delegates[id_network][memo_id][address] -= float(data_memo_address_time[height][address]['amount'])
+                    else:
+                        log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} have 0")
+                        user_delegates[id_network][memo_id][address] = 0
 
                 userId = cache_users[id_network][memo_id][address]
                 memo.Add_New_Transactions(userId=userId, 
                                         typeId=data_memo_address_time[height][address]['typeId'],
                                         amount=data_memo_address_time[height][address]['amount'],
                                         executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
-                                        hash=data_memo_address_time[height][address]['hash']
+                                        hash=data_memo_address_time[height][address]['hash'],
+                                        transactionMark=data_memo_address_time[height][address]['transactionMark']
                                         )
                 
     except:
@@ -117,6 +123,7 @@ async def process_reward(
     id_network = str(name_network.get('id'))
     
     if user_delegates_all == 0:
+        log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: 0")
         return
     
     amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')], time_wait)
@@ -134,6 +141,7 @@ async def main():
     memo = MemeApi.MemeApi(id=id_log, network="TYPE START")
 
     while True:
+        
         log.info("Start")
         urls_kepler_json = WorkWithJson('Update/network_price.json')
         data2 = urls_kepler_json.get_json()
@@ -168,25 +176,29 @@ async def main():
 
 
         # Запуск обраховування Rewards
-        if data['last_completion_time'] != None:
-            last_time = datetime.fromisoformat(data['last_completion_time'])
-            now_time = datetime.now()
-            time_wait = (now_time - last_time).total_seconds() / 60
+        try:
+            if data['last_completion_time'] != None:
+                last_time = datetime.fromisoformat(data['last_completion_time'])
+                now_time = datetime.now()
+                time_wait = (now_time - last_time).total_seconds() / 60
 
-            log.info(f"ID {id_log} -> Time Wait ::  {time_wait}")
-            for name_network in change_blockchain:
-                for id_network in cache_users:
-                    if str(name_network.get('id')) != id_network:
-                        continue
-                    log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
-                    for memo_id in cache_users[id_network]:
-                        log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
-                        
-                        tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
-                                                id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
-                        await asyncio.gather(*tasks)
+                log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
+                for name_network in change_blockchain:
+                    for id_network in cache_users:
+                        if str(name_network.get('id')) != id_network:
+                            continue
+                        log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
+                        for memo_id in cache_users[id_network]:
+                            log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+                            
+                            tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
+                                                    id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
+                            await asyncio.gather(*tasks)
 
-        data["last_completion_time"] = datetime.now().isoformat()
+            data["last_completion_time"] = datetime.now().isoformat()
+        except:
+            log.exception("ERROR REWARDS")
+
         data["id"] += 1
         work_json.set_json(data=data)
         log.info(f"Time work: {time.time() - star_time:.4f}")

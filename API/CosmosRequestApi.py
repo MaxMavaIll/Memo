@@ -212,6 +212,7 @@ class CosmosRequestApi():
 
                     log.info(f"ID {self.id_log} | {self.network} -> WRITE DELEGATE {hash} with MEMO: {data['memo']}")
                     cache_hashes[data['messages'][0]['delegator_address']] = {'memo': wallet_type.get('id'), 
+                                                                'transactionMark': wallet_type.get('name'),
                                                                 'typeId': transactions_types[0].get('id'), 
                                                                 'amount': amount,
                                                                 'hash': hash,
@@ -242,6 +243,7 @@ class CosmosRequestApi():
                     time = full_data['tx_response']['timestamp']
                     cache_hashes[data['messages'][0]['delegator_address']] = {
                                                         'memo': memo_id,
+                                                        'transactionMark': None,
                                                         'typeId': transactions_types[1].get('id'), 
                                                         'amount': amount,
                                                         'hash': hash,

@@ -70,3 +70,16 @@ async def check_rpc(
                 log.error(f"ID {id_log} -> {network['rpc']} {response.status}")
                 del settings['network'][name_network]
                 
+def check_existing_memo(
+          cache_users: dict,
+          id_network: str,
+          address: str,
+          id_memo: str
+):
+    for memo_id, users in cache_users[id_network].items():
+        if address in list(users.keys()):
+            if memo_id == id_memo:
+                return memo_id, True, False
+            return memo_id, False, False
+    
+    return id_memo, True, True
