@@ -78,15 +78,29 @@ async def process_network(
                 if memo_id not in  user_delegates[id_network]:
                     user_delegates[id_network][memo_id] = {}
 
-                memo_id, delegate_answer, answer = check_existing_memo(cache_users, id_network, address, memo_id)
-                log.info(f"{memo_id}, {delegate_answer}, {answer}")
-                if answer:
+                # memo_id, delegate_answer, answer = check_existing_memo(cache_users, id_network, address, memo_id)
+                # log.info(f"{memo_id}, {delegate_answer}, {answer}")
+                if address not in cache_users[id_network][memo_id]:
                     log.info(f"{id_log} | {name_network.get('name')}  ->  Add new user with: {address}")
                     userId = await memo.Add_New_User(address=address, walletType=data_memo_address_time[height][address]['memo'], blockchain=name_network.get('id'))
-                    cache_users[id_network][memo_id][address] = userId
-                    user_delegates[id_network][memo_id][address] = 0
+                    if userId != None:
+                        cache_users[id_network][memo_id][address] = userId
+                        user_delegates[id_network][memo_id][address] = 0
+                    else:
+                        memo_id = check_existing_memo(cache_users, id_network, address, memo_id)
 
-                if delegate_answer:
+                        log.info(f"User's already created!")
+
+                userId = cache_users[id_network][memo_id][address]
+                answer_delegate = memo.Add_New_Transactions(userId=userId, 
+                                        typeId=data_memo_address_time[height][address]['typeId'],
+                                        amount=data_memo_address_time[height][address]['amount'],
+                                        executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
+                                        hash=data_memo_address_time[height][address]['hash'],
+                                        transactionMark=data_memo_address_time[height][address]['transactionMark']
+                                        )
+                
+                if answer_delegate.get('message') == "Transaction was successfully registered!": 
                     if data_memo_address_time[height][address]['typeId'] == 1:
                         log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} Delegate: {data_memo_address_time[height][address]['amount']}")
                         user_delegates[id_network][memo_id][address] += float(data_memo_address_time[height][address]['amount'])
@@ -96,15 +110,6 @@ async def process_network(
                     else:
                         log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} have 0")
                         user_delegates[id_network][memo_id][address] = 0
-
-                userId = cache_users[id_network][memo_id][address]
-                memo.Add_New_Transactions(userId=userId, 
-                                        typeId=data_memo_address_time[height][address]['typeId'],
-                                        amount=data_memo_address_time[height][address]['amount'],
-                                        executedAt=str(to_tmpstmp_mc(data_memo_address_time[height][address]['time'])),
-                                        hash=data_memo_address_time[height][address]['hash'],
-                                        transactionMark=data_memo_address_time[height][address]['transactionMark']
-                                        )
                 
     except:
         log.exception("ERROR process_network")

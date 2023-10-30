@@ -190,6 +190,7 @@ class MemeApi():
             log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
             log.debug(payload)
             log.debug(answer.text)
+            return answer.json()
         
         else:
             log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")

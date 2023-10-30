@@ -78,8 +78,4 @@ def check_existing_memo(
 ):
     for memo_id, users in cache_users[id_network].items():
         if address in list(users.keys()):
-            if memo_id == id_memo:
-                return memo_id, True, False
-            return memo_id, False, False
-    
-    return id_memo, True, True
+            return memo_id
