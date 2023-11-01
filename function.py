@@ -38,13 +38,14 @@ def to_tmpstmp_mc(
 async def get_APR_from(
         amountDelegated: int, 
         APR: float,
-        time_wait: float
+        time_wait: float,
+        commission: float
         ) -> str:
     minute = 365 * 24 * 60
     hour = 365 * 24
     reward = f"{(amountDelegated * ( APR / 100 ) / minute) * time_wait:.10f}"
 
-    return f"{float(reward) - float(reward) * 0.02:.10f}", f"{float(reward) * 0.02:.10f}" # amountDelegated * ( APR / 100 ) / minute
+    return f"{float(reward) - float(reward) * commission:.10f}", f"{float(reward) * commission:.10f}" # amountDelegated * ( APR / 100 ) / minute
 
 async def check_rpc(
         network: dict,

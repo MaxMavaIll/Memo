@@ -34,12 +34,41 @@ log.addHandler(log_f)
 cache_users = None
 user_delegates = None
 
+
+async def process_reward(
+        memo: MemeApi.MemeApi,
+        user_delegates_all: int,
+        data: dict,
+        id_log: int,
+        memo_id: str,
+        name_network: dict,
+        address: str,
+        time_wait: float,
+        commission: float
+
+):
+    log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
+    
+    id_network = str(name_network.get('id'))
+    
+    if user_delegates_all == 0:
+        log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: 0")
+        return
+    
+    amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')], time_wait, commission)
+    log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: id {name_network.get('id')} ")
+    log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator} {commission}% APR {data['APR'][name_network.get('name')]}")
+
+    userId = cache_users[id_network][memo_id][address]
+    await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+
 async def process_network(
         name_network: dict, 
         data: dict,
         transactions_type: list,
         wallet_type: list,
-        settings: dict
+        settings: dict,
+        data2: dict
         ):
 
     id_log = data["id"]
@@ -110,33 +139,46 @@ async def process_network(
                     else:
                         log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} have 0")
                         user_delegates[id_network][memo_id][address] = 0
+        
+        log.info(f"\n{id_log} | {name_network.get('name')}  -> REWARDS")
+        if data['last_completion_time'] != None:
+            last_time = datetime.fromisoformat(data['last_completion_time'][name_network.get('name')])
+            now_time = datetime.now()
+            time_wait = (now_time - last_time).total_seconds() / 60
+
+            log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
+            for memo_id in cache_users[id_network]:
+                log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+
+                tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
+                                                    id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait, 
+                                                    commission=settings["network"][name_network.get('name')]["commission"]) for address in cache_users[id_network][memo_id]]
+                await asyncio.gather(*tasks)
+        else:
+            data["last_completion_time"] = {}
+
+        data["last_completion_time"][name_network.get('name')] = datetime.now().isoformat()
+                # log.info(f"{id_log} | {name_network.get('name')}  ->")
+                # amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data2["APR"][name_network.get('name')])
+                # log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")
+
+                # userId = cache_users[id_network][memo_id][address]
+                # memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+
+        # for name_network in change_blockchain:
+        #             for id_network in cache_users:
+        #                 if str(name_network.get('id')) != id_network:
+        #                     continue
+        #                 log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
+        #                 for memo_id in cache_users[id_network]:
+        #                     log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+                            
+        #                     tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
+        #                                             id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
+        #                     await asyncio.gather(*tasks)       
                 
     except:
         log.exception("ERROR process_network")
-
-async def process_reward(
-        memo: MemeApi.MemeApi,
-        user_delegates_all: int,
-        data: dict,
-        id_log: int,
-        memo_id: str,
-        name_network: dict,
-        address: str,
-        time_wait: float
-
-):
-    id_network = str(name_network.get('id'))
-    
-    if user_delegates_all == 0:
-        log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: 0")
-        return
-    
-    amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')], time_wait)
-    log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: id {name_network.get('id')} ")
-    log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data['APR'][name_network.get('name')]}")
-
-    userId = cache_users[id_network][memo_id][address]
-    await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
 
 
 async def main():
@@ -176,33 +218,33 @@ async def main():
         log.debug(change_blockchain)
         
         # Запуск моніторингу мереж
-        tasks = [process_network(name_network, data, transactions_type, wallet_type, settings) for name_network in change_blockchain]
+        tasks = [process_network(name_network, data, transactions_type, wallet_type, settings, data2) for name_network in change_blockchain]
         await asyncio.gather(*tasks)
 
 
         # Запуск обраховування Rewards
-        try:
-            if data['last_completion_time'] != None:
-                last_time = datetime.fromisoformat(data['last_completion_time'])
-                now_time = datetime.now()
-                time_wait = (now_time - last_time).total_seconds() / 60
+        # try:
+        #     if data['last_completion_time'] != None:
+        #         last_time = datetime.fromisoformat(data['last_completion_time'])
+        #         now_time = datetime.now()
+        #         time_wait = (now_time - last_time).total_seconds() / 60
 
-                log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
-                for name_network in change_blockchain:
-                    for id_network in cache_users:
-                        if str(name_network.get('id')) != id_network:
-                            continue
-                        log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
-                        for memo_id in cache_users[id_network]:
-                            log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+        #         log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
+        #         for name_network in change_blockchain:
+        #             for id_network in cache_users:
+        #                 if str(name_network.get('id')) != id_network:
+        #                     continue
+        #                 log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
+        #                 for memo_id in cache_users[id_network]:
+        #                     log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
                             
-                            tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
-                                                    id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
-                            await asyncio.gather(*tasks)
+        #                     # tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
+        #                     #                         id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
+        #                     # await asyncio.gather(*tasks)
 
-            data["last_completion_time"] = datetime.now().isoformat()
-        except:
-            log.exception("ERROR REWARDS")
+        #     data["last_completion_time"] = datetime.now().isoformat()
+        # except:
+        #     log.exception("ERROR REWARDS")
 
         data["id"] += 1
         work_json.set_json(data=data)
