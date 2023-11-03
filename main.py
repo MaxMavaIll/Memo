@@ -44,12 +44,12 @@ async def process_reward(
         name_network: dict,
         address: str,
         commission: float,
-        last_time: dict
+        last_time_save: dict
 
 ):
     last_time = datetime.fromisoformat(last_time['last_completion_time'][name_network.get('name')])
     now_time = datetime.now()
-    log.info(f"{now_time.isoformat()} - {last_time['last_completion_time'][name_network.get('name')]}")
+    log.info(f"{now_time.isoformat()} - {last_time_save['last_completion_time'][name_network.get('name')]}")
     time_difference = now_time - last_time
     time_wait = time_difference.total_seconds()
     log.info(f"ID {id_log} -> Time Wait in sleep :: min {(time_wait+time_wait*0.08)/60} sec {time_wait+time_wait*0.08}")
@@ -152,7 +152,7 @@ async def process_network(
 
                 tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
                                                     id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, 
-                                                    last_time = data,
+                                                    last_time_save = data,
                                                     commission=settings["network"][name_network.get('name')]["commission"]) for address in cache_users[id_network][memo_id]]
                 await asyncio.gather(*tasks)
         else:
