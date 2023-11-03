@@ -52,7 +52,7 @@ async def process_reward(
     log.info(f"{now_time.isoformat()} - {last_time_save['last_completion_time'][name_network.get('name')]}")
     time_difference = now_time - last_time
     time_wait = time_difference.total_seconds()
-    log.info(f"ID {id_log} -> Time Wait in sleep :: min {(time_wait+time_wait*0.08)/60} sec {time_wait+time_wait*0.08}")
+    log.info(f"ID {id_log} -> Time Wait in sleep :: min {(time_wait+time_wait*config_toml['network'][name_network.get('name')]['percent_add_time'])/60} sec {time_wait+time_wait*config_toml['network'][name_network.get('name')]['percent_add_time']}")
     
     id_network = str(name_network.get('id'))
     
@@ -60,7 +60,7 @@ async def process_reward(
         log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: 0")
         return
     
-    amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')], time_wait, commission)
+    amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')], time_wait, commission, name_network.get('name'))
     log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: id {name_network.get('id')} ")
     log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator} {commission}% APR {data['APR'][name_network.get('name')]}")
 

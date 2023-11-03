@@ -39,11 +39,12 @@ async def get_APR_from(
         amountDelegated: int, 
         APR: float,
         time_wait: float,
-        commission: float
+        commission: float,
+        network: str
         ) -> str:
     minute = 365 * 24 * 60
     hour = 365 * 24
-    reward = f"{(amountDelegated * ( APR / 100 ) / minute) * ((time_wait + time_wait * 0.08) / 60) :.10f}"
+    reward = f"{(amountDelegated * ( APR / 100 ) / minute) * ((time_wait + time_wait * config_toml['network'][network]['percent_add_time']) / 60) :.10f}"
 
     return f"{float(reward) - float(reward) * commission:.10f}", f"{float(reward) * commission:.10f}" # amountDelegated * ( APR / 100 ) / minute
 
