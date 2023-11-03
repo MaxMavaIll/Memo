@@ -47,7 +47,7 @@ async def process_reward(
         last_time_save: dict
 
 ):
-    last_time = datetime.fromisoformat(last_time['last_completion_time'][name_network.get('name')])
+    last_time = datetime.fromisoformat(last_time_save['last_completion_time'][name_network.get('name')])
     now_time = datetime.now()
     log.info(f"{now_time.isoformat()} - {last_time_save['last_completion_time'][name_network.get('name')]}")
     time_difference = now_time - last_time
