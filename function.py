@@ -34,6 +34,12 @@ def to_tmpstmp_mc(
 
     return timestamp_ms
 
+def get_amount_from_addr(origin_delegate: list, addr: str) -> str:
+    for staker_user in origin_delegate:
+        if staker_user['delegation']['delegator_address'] == addr:
+            return staker_user['balance']['amount']    
+    return "0"
+
 
 async def get_APR_from(
         amountDelegated: int, 

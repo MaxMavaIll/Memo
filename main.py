@@ -9,6 +9,7 @@ from WorkJson import WorkWithJson
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
+rewards_json = WorkWithJson('Rewards/rewards.json')
 
 
 
@@ -35,32 +36,60 @@ cache_users = None
 user_delegates = None
 
 
-async def process_reward(
-        memo: MemeApi.MemeApi,
-        user_delegates_all: int,
-        data: dict,
-        id_log: int,
-        memo_id: str,
-        name_network: dict,
-        address: str,
-        time_wait: float,
-        commission: float
+async def Update_Rewards(
+        cosmos: CosmosRequestApi.CosmosRequestApi,
+        network_id: str,
+        memo_delegate: dict,
+        rewards_save: dict,
+        
 
 ):
-    log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
     
-    id_network = str(name_network.get('id'))
-    
-    if user_delegates_all == 0:
-        log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: 0")
-        return
-    
-    amountReward_user, amountReward_Validator = await get_APR_from(user_delegates[id_network][memo_id][address], data["APR"][name_network.get('name')], time_wait, commission)
-    log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address} :: id {name_network.get('id')} ")
-    log.info(f"{id_log} | {name_network.get('name')}  ->  | All rewards user: {amountReward_user} + commission {amountReward_Validator} {commission}% APR {data['APR'][name_network.get('name')]}")
+    async def process_addrres_reward(
+            addrres: str,
+            origin_delegate: list,
+            memo_amount_delegate: float,
+            rewards_save: float
+    ):
+        
+        origin_amount_delegate = float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
 
-    userId = cache_users[id_network][memo_id][address]
-    await memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
+        if origin_amount_delegate == 0:
+            return
+        
+        rewards_user = float(cosmos.Get_Rewards_User(address_user=address))
+        percent_memo = get_percent_memo(origin_amount_delegate=origin_amount_delegate, memo_amount_delegate=memo_amount_delegate)
+        
+        if rewards_user < rewards_save: 
+            return
+        
+        tmp = (rewards_user - rewards_save) * percent_memo
+        validator_commisstion = f"{tmp * 0.05 / 1_000_000:.10f}"
+        user_get_rewards = f"{tmp / 1_000_000 - float(validator_commisstion):.10f}"
+        log.info(f"{validator_commisstion}, {user_get_rewards}")
+
+        #Update
+
+
+    origin_delegate = cosmos.Get_Stakers()
+    
+
+    for memo_id, memo_values  in memo_delegate[network_id].items():
+        for address in memo_values:
+            if address not in rewards_save:
+                rewards_save[address] = 0
+
+            await process_addrres_reward(addrres=address, 
+                                   origin_delegate=origin_delegate, 
+                                   memo_amount_delegate=memo_values[address] * 1_000_000,
+                                   rewards_save=rewards_save[address],
+                                   user_id = cache_users[network_id][memo_id][address])
+            
+        # tasks = [process_addrres_reward(addrres=address,
+        #                                 origin_delegate=origin_delegate,
+        #                                 memo_amount_delegate=memo_values[address]) for address in memo_values]
+        # await asyncio.gather(*tasks)
+
 
 async def process_network(
         name_network: dict, 
@@ -94,6 +123,14 @@ async def process_network(
         if id_network not in user_delegates:
             user_delegates[id_network] = {}
 
+        rewards_save = rewards_json.get_json()
+        # for network in ['4']:
+        #     await Update_Rewards(network=network,memo_delegate=memo_delegate, rewards_save=rewards_save)
+        task = [Update_Rewards(cosmos=cosmos, network_id=name_network.get("id"),
+                            memo_delegate=user_delegates)]
+        await asyncio.gather(*task)
+        
+        
         data_memo_address_time = await cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network], settings_json=data)
 
         log.info(f"{id_log} | {name_network.get('name')}  ->  New info {data_memo_address_time}")
@@ -140,24 +177,26 @@ async def process_network(
                         log.info(f"{id_log} | {name_network.get('name')}  ->  User: {address} have 0")
                         user_delegates[id_network][memo_id][address] = 0
         
-        log.info(f"\n{id_log} | {name_network.get('name')}  -> REWARDS")
-        if data['last_completion_time'] != None:
-            last_time = datetime.fromisoformat(data['last_completion_time'][name_network.get('name')])
-            now_time = datetime.now()
-            time_wait = (now_time - last_time).total_seconds() / 60
+        # log.info(f"\n{id_log} | {name_network.get('name')}  -> REWARDS")
+        # if data['last_completion_time'] != None:
+        #     last_time = datetime.fromisoformat(data['last_completion_time'][name_network.get('name')])
+        #     now_time = datetime.now()
+        #     time_wait = (now_time - last_time).total_seconds() / 60
 
-            log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
-            for memo_id in cache_users[id_network]:
-                log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
+        #     log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
+        #     for memo_id in cache_users[id_network]:
+        #         log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
 
-                tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
-                                                    id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait, 
-                                                    commission=settings["network"][name_network.get('name')]["commission"]) for address in cache_users[id_network][memo_id]]
-                await asyncio.gather(*tasks)
-        else:
-            data["last_completion_time"] = {}
+        #         tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
+        #                                             id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait, 
+        #                                             commission=settings["network"][name_network.get('name')]["commission"]) for address in cache_users[id_network][memo_id]]
+        #         await asyncio.gather(*tasks)
+        # else:
+        #     data["last_completion_time"] = {}
 
-        data["last_completion_time"][name_network.get('name')] = datetime.now().isoformat()
+        # data["last_completion_time"][name_network.get('name')] = datetime.now().isoformat()
+        
+        
                 # log.info(f"{id_log} | {name_network.get('name')}  ->")
                 # amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data2["APR"][name_network.get('name')])
                 # log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")

@@ -303,10 +303,36 @@ class CosmosRequestApi():
             return {}
 
 
+    async def Get_Stakers(self) -> list:
+        url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}/delegations"
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=url) as response:
+                if response.status == 200:
+                    log.info("Success, I get 200")
+                    data = await response.json()
+                    return data["delegation_responses"]
+                else:
+                    log.error(f"Fail, I get {response.status}")
+                    log.error(f"Answer from server: {await response.text()}")
+                    return []
 
+    async def Get_Rewards_User(
+            self,
+            address_user: str
+    ) -> str:
+        url = f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}"
 
-
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    log.info("Success, I get 200")
+                    data = await response.json()
+                    return data['rewards'][-1]['amount']
+                else:
+                    log.error(f"Fail, I get {response.status}")
+                    log.error(f"Answer with server: {await response.text()}")
+                    return "0"
 
 
 
