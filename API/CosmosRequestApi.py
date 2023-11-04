@@ -153,17 +153,19 @@ class CosmosRequestApi():
         url = f"{self.rpc}/tx_search?query=\"tx.height={height}\""
         
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                if response.status == 200:
-                    log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
-                    data = await response.json()
-                    log.info(f"ID {self.id_log} | {self.network}  -> Total hash {len(data['result']['txs'])}")
-                    return [tmp['hash'] for tmp in data['result']['txs']]
-                else:
-                    log.error(f"Fail, I get {response.status}")
-                    log.error(f"Answer with server: {await response.text()}")
-                    return []
-
+            try:
+                async with session.get(url,timeout=aiohttp.ClientTimeout(total=10)) as response:
+                    if response.status == 200:
+                        log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
+                        data = await response.json()
+                        log.info(f"ID {self.id_log} | {self.network}  -> Total hash {len(data['result']['txs'])}")
+                        return [tmp['hash'] for tmp in data['result']['txs']]
+                    else:
+                        log.error(f"Fail, I get {response.status}")
+                        log.error(f"Answer with server: {await response.text()}")
+                        return []
+            except aiohttp.ClientError as e:
+                log.warn(f"Помилка під час запиту: {e}")
     async def Get_Memo(
             self,
             height: int,
