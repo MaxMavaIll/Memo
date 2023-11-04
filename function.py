@@ -40,7 +40,6 @@ def get_amount_from_addr(origin_delegate: list, addr: str) -> str:
             return staker_user['balance']['amount']    
     return "0"
 
-
 async def get_APR_from(
         amountDelegated: int, 
         APR: float,
@@ -86,3 +85,8 @@ def check_existing_memo(
     for memo_id, users in cache_users[id_network].items():
         if address in list(users.keys()):
             return memo_id
+        
+def get_percent_memo(origin_amount_delegate, memo_amount_delegate) -> float:
+
+    x =  ((memo_amount_delegate * 100) / origin_amount_delegate) / 100
+    return x
