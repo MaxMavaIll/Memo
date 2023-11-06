@@ -154,12 +154,6 @@ class MemeApi():
                     log.error(f"{self.id_log} | {self.network}  -> Fail, I get {response.status}")
                     log.error(f"{self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
 
-
-
-
-
-
-
     def Add_New_Transactions(
             self, 
             userId: int, 
@@ -196,7 +190,7 @@ class MemeApi():
             log.error(f"{self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
             log.error(f"{self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
-    async def Update_User_Stats(self, userId: int, amountUserRewards: str, amountValidatorRewards: str):
+    async def Update_User_Stats_Amount(self, userId: int, amountUserRewards: str, amountValidatorRewards: str):
         log.info(f"{self.id_log} | {self.network}  -> #--Update--#")
 
         payload = json.dumps({

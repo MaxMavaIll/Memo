@@ -164,8 +164,9 @@ class CosmosRequestApi():
                         log.error(f"Fail, I get {response.status}")
                         log.error(f"Answer with server: {await response.text()}")
                         return []
-            except aiohttp.ClientError as e:
-                log.warn(f"Помилка під час запиту: {e}")
+            except:
+                log.exception(f"Помилка під час запиту: ")
+                return []
     async def Get_Memo(
             self,
             height: int,

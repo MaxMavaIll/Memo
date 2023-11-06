@@ -89,4 +89,4 @@ def check_existing_memo(
 def get_percent_memo(origin_amount_delegate, memo_amount_delegate) -> float:
 
     x =  ((memo_amount_delegate * 100) / origin_amount_delegate) / 100
-    return x
+    return round(x, 2)
