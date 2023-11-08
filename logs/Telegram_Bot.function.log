@@ -1,0 +1,25 @@
+Telegram_Bot.function 2023-11-08 08:16:18,380 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:16:18,663 INFO ID: 8096 -> Повідомлення було відправиленно успішно код 200
+Telegram_Bot.function 2023-11-08 08:16:18,744 DEBUG ID: 8096 -> Отримано через папит:
+<coroutine object ClientResponse.text at 0xffff7db297e0>
+Telegram_Bot.function 2023-11-08 08:18:36,389 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:19:50,245 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:19:50,551 INFO ID: 8096 -> Повідомлення було відправиленно успішно код 200
+Telegram_Bot.function 2023-11-08 08:19:50,557 DEBUG ID: 8096 -> Отримано через папит:
+{"ok":true,"result":{"message_id":6,"from":{"id":6658199003,"is_bot":true,"first_name":"Proposals VOTE","username":"proposals_vote_bot"},"chat":{"id":954878160,"first_name":"Illya","username":"CS_Gnom","type":"private"},"date":1699431590,"text":"Error Main\nTraceback (most recent call last):\n  File \"/app/main.py\", line 215, in main\n    10/0\nZeroDivisionError: division by zero","entities":[{"offset":59,"length":7,"type":"url"}]}}
+Telegram_Bot.function 2023-11-08 08:20:50,708 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:20:51,133 INFO ID: 8096 -> Повідомлення було відправиленно успішно код 200
+Telegram_Bot.function 2023-11-08 08:20:51,150 DEBUG ID: 8096 -> Отримано через папит:
+{"ok":true,"result":{"message_id":7,"from":{"id":6658199003,"is_bot":true,"first_name":"Proposals VOTE","username":"proposals_vote_bot"},"chat":{"id":954878160,"first_name":"Illya","username":"CS_Gnom","type":"private"},"date":1699431651,"text":"Error Main\nTraceback (most recent call last):\n  File \"/app/main.py\", line 215, in main\n    10/0\nZeroDivisionError: division by zero","entities":[{"offset":59,"length":7,"type":"url"}]}}
+Telegram_Bot.function 2023-11-08 08:21:51,290 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:21:51,519 INFO ID: 8096 -> Повідомлення було відправиленно успішно код 200
+Telegram_Bot.function 2023-11-08 08:21:51,524 DEBUG ID: 8096 -> Отримано через папит:
+{"ok":true,"result":{"message_id":8,"from":{"id":6658199003,"is_bot":true,"first_name":"Proposals VOTE","username":"proposals_vote_bot"},"chat":{"id":954878160,"first_name":"Illya","username":"CS_Gnom","type":"private"},"date":1699431711,"text":"Error Main\nTraceback (most recent call last):\n  File \"/app/main.py\", line 215, in main\n    10/0\nZeroDivisionError: division by zero","entities":[{"offset":59,"length":7,"type":"url"}]}}
+Telegram_Bot.function 2023-11-08 08:22:51,631 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:22:52,000 INFO ID: 8096 -> Повідомлення було відправиленно успішно код 200
+Telegram_Bot.function 2023-11-08 08:22:52,012 DEBUG ID: 8096 -> Отримано через папит:
+{"ok":true,"result":{"message_id":9,"from":{"id":6658199003,"is_bot":true,"first_name":"Proposals VOTE","username":"proposals_vote_bot"},"chat":{"id":954878160,"first_name":"Illya","username":"CS_Gnom","type":"private"},"date":1699431771,"text":"Error Main\nTraceback (most recent call last):\n  File \"/app/main.py\", line 215, in main\n    10/0\nZeroDivisionError: division by zero","entities":[{"offset":59,"length":7,"type":"url"}]}}
+Telegram_Bot.function 2023-11-08 08:25:54,490 INFO Відправляю повідомлення -> 954878160
+Telegram_Bot.function 2023-11-08 08:25:54,664 INFO ID: 8097 -> Повідомлення було відправиленно успішно код 200
+Telegram_Bot.function 2023-11-08 08:25:54,666 DEBUG ID: 8097 -> Отримано через папит:
+{"ok":true,"result":{"message_id":11,"from":{"id":6658199003,"is_bot":true,"first_name":"Proposals VOTE","username":"proposals_vote_bot"},"chat":{"id":954878160,"first_name":"Illya","username":"CS_Gnom","type":"private"},"date":1699431954,"text":"ERROR process_network\nTraceback (most recent call last):\n  File \"/app/main.py\", line 130, in process_network\n    10/0\nZeroDivisionError: division by zero","entities":[{"offset":0,"length":21,"type":"bold"},{"offset":70,"length":7,"type":"url"}]}}

@@ -1,6 +1,9 @@
+import traceback
 import requests, logging, toml, json, aiohttp, asyncio
 from logging.handlers import RotatingFileHandler
 from WorkJson import WorkWithJson
+import Telegram_Bot.function as tb
+
 
 config_toml = toml.load('config.toml')
 work_json = WorkWithJson('settings.json')
@@ -166,6 +169,9 @@ class CosmosRequestApi():
                         return []
             except:
                 log.exception(f"Помилка під час запиту: ")
+                message = "<b>Помилка під час запиту</b>\n"
+                message += traceback.format_exc()
+                await tb.send_message(log_id=self.id_log, message=message)
                 return []
     async def Get_Memo(
             self,
@@ -290,7 +296,7 @@ class CosmosRequestApi():
             
             height = settings_json['last_height'][self.network]
             
-
+            log.info(f"now {height}, last {last_height_network}")
             for tmp_height in range(height, last_height_network):
                 
                 log.info(f"ID {self.id_log} | {self.network}  -> \n\nHeight: {tmp_height} - {last_height_network}\n")
@@ -303,6 +309,10 @@ class CosmosRequestApi():
         
         except:
             log.exception("Error Cosmos API")
+            message = "<b>Error Cosmos API</b>\n"
+            message += traceback.format_exc()
+            await tb.send_message(log_id=self.id_log, message=message)
+            
             return {}
 
 

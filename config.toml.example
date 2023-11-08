@@ -12,6 +12,10 @@ url_driver = "http://localhost:4444"
 # Час вимірюється у годинах 1 = 1 hour
 time = 1 
 
+[telegram_bot]
+TOKEN = '6658199003:AAFPE5jwXeDESTu2ZkafornzUAYR8_DGlU8'
+admins = [954878160]
+
 [network]
 isMainnet = false
 
@@ -20,3 +24,4 @@ isMainnet = false
 rest = ''
 rpc = ''
 valoper_address = ''
+token_zero = 6

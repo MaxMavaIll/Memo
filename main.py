@@ -1,6 +1,7 @@
-import logging, toml, time, asyncio, copy
+import logging, toml, time, asyncio, copy, traceback
 from datetime import datetime
 
+import Telegram_Bot.function as tb
 from logging.handlers import RotatingFileHandler
 from function import * 
 from API import MemeApi, CosmosRequestApi
@@ -126,7 +127,7 @@ async def process_network(
         )
 
         log.info(f"{id_log} | {name_network.get('name')}  ->  Wallet_type ")
-       
+        
         if id_network not in cache_users:
             cache_users[id_network] = {}
 
@@ -134,14 +135,12 @@ async def process_network(
             user_delegates[id_network] = {}
 
         rewards_save = rewards_json.get_json()
-        # for network in ['4']:
-        #     await Update_Rewards(network=network,memo_delegate=memo_delegate, rewards_save=rewards_save)
-        # log.info(f"User Delegate: {user_delegates}")
         await Update_Rewards(cosmos=cosmos, memo=memo, network_id=str(name_network.get("id")),
                             memo_delegate=user_delegates, rewards_save=rewards_save)
         
         # await asyncio.gather(*task)
         rewards_json.set_json(rewards_save)
+        
         
         data_memo_address_time = await cosmos.Get_Block_Memo(transactions_type=transactions_type, wallet_type=wallet_type, address_user=cache_users[id_network], settings_json=data)
 
@@ -156,8 +155,6 @@ async def process_network(
                 if memo_id not in  user_delegates[id_network]:
                     user_delegates[id_network][memo_id] = {}
 
-                # memo_id, delegate_answer, answer = check_existing_memo(cache_users, id_network, address, memo_id)
-                # log.info(f"{memo_id}, {delegate_answer}, {answer}")
                 #Add New User
                 if address not in cache_users[id_network][memo_id]:
                     log.info(f"{id_log} | {name_network.get('name')}  ->  Add new user with: {address}")
@@ -195,49 +192,12 @@ async def process_network(
                 if address not in rewards_save:
                     rewards_save = rewards_json.get_json()
                     rewards_save[address] = await cosmos.Get_Rewards_User(address_user=address)
-                    rewards_json.set_json(rewards_save)
-        
-        # log.info(f"\n{id_log} | {name_network.get('name')}  -> REWARDS")
-        # if data['last_completion_time'] != None:
-        #     last_time = datetime.fromisoformat(data['last_completion_time'][name_network.get('name')])
-        #     now_time = datetime.now()
-        #     time_wait = (now_time - last_time).total_seconds() / 60
-
-        #     log.info(f"ID {id_log} -> Time Wait in sleep ::  {time_wait}")
-        #     for memo_id in cache_users[id_network]:
-        #         log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
-
-        #         tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
-        #                                             id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait, 
-        #                                             commission=settings["network"][name_network.get('name')]["commission"]) for address in cache_users[id_network][memo_id]]
-        #         await asyncio.gather(*tasks)
-        # else:
-        #     data["last_completion_time"] = {}
-
-        # data["last_completion_time"][name_network.get('name')] = datetime.now().isoformat()
-        
-        
-                # log.info(f"{id_log} | {name_network.get('name')}  ->")
-                # amountReward_user, amountReward_Validator = get_APR_from(user_delegates[id_network][memo_id][address], data2["APR"][name_network.get('name')])
-                # log.info(f"{id_log} | {name_network.get('name')}  ->  | Address {address}  | All rewards user: {amountReward_user} + commission {amountReward_Validator}  APR {data2['APR'][name_network.get('name')]}")
-
-                # userId = cache_users[id_network][memo_id][address]
-                # memo.Update_User_Stats(userId, amountReward_user, amountReward_Validator)
-
-        # for name_network in change_blockchain:
-        #             for id_network in cache_users:
-        #                 if str(name_network.get('id')) != id_network:
-        #                     continue
-        #                 log.info(f"\nID {id_log} | {name_network.get('name')}  -> REWARDS")
-        #                 for memo_id in cache_users[id_network]:
-        #                     log.info(f"{id_log} | {name_network.get('name')}  -> Memo :: {memo_id}")
-                            
-        #                     tasks = [process_reward(memo=memo, user_delegates_all=user_delegates[id_network][memo_id][address], data=data2, 
-        #                                             id_log=id_log, memo_id=memo_id, name_network=name_network, address=address, time_wait=time_wait) for address in cache_users[id_network][memo_id]]
-        #                     await asyncio.gather(*tasks)       
-                
+                    rewards_json.set_json(rewards_save)                
     except:
         log.exception("ERROR process_network")
+        message = "<b>ERROR process_network</b>\n"
+        message += traceback.format_exc()
+        await tb.send_message(log_id=id_log, message=message)
 
 
 async def main():
@@ -292,6 +252,9 @@ async def main():
             time.sleep(settings['time_update'] )
         except:
             log.exception("Error Main")
+            message = "<b>Error Main</b>\n"
+            message += traceback.format_exc()
+            await tb.send_message(log_id=id_log, message=message)
             log.info(f"wait {settings['time_update'] } sec\n\n")
             time.sleep(settings['time_update'] )
         

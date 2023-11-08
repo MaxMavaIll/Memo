@@ -61,20 +61,50 @@ async def check_rpc(
     if type(dict()) != type(network):
         return
     
-    url = f"{network['rpc']}/status"
-    
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                log.info(f"ID {id_log} -> {network['rpc']} 200")
-                data = await response.json()
-                if data["result"]["sync_info"]["catching_up"] == True:
-                    log.info(f"ID {id_log} -> {name_network} not already")
-                    del settings['network'][name_network]
-                log.info(f"ID {id_log} -> {name_network} already")
-            else:
-                log.error(f"ID {id_log} -> {network['rpc']} {response.status}")
-                del settings['network'][name_network]
+    for rpc in network['rpc']:
+
+        url = f"{rpc}/status"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    
+                    log.info(f"ID {id_log} -> {rpc} 200")
+                    data = await response.json()
+                    if data["result"]["sync_info"]["catching_up"] == True:
+                        
+                        log.info(f"ID {id_log} -> {name_network} not already")
+                        settings['network'][name_network]['rpc'] = ""
+                        continue
+                    
+                    log.info(f"ID {id_log} -> {name_network} already")
+                    settings['network'][name_network]['rpc'] = rpc
+                    break
+                else:
+                    
+                    log.error(f"ID {id_log} -> {rpc} {response.status}")
+                    settings['network'][name_network]['rpc'] = ""
+                    
+    for rest in network['rest']:
+
+        url = f"{rest}"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200 or response.status == 501:
+                    
+                    log.info(f"ID {id_log} -> {rest} 200, 501")
+                    settings['network'][name_network]['rest'] = rest
+                    break
+                else:
+                    
+                    log.error(f"ID {id_log} -> {rest} {response.status}")
+                    settings['network'][name_network]['rest'] = ""
+
+    if settings['network'][name_network]['rpc'] == "" or settings['network'][name_network]['rest'] == "":
+        log.info(f"Does not have a working rpc or rest :: {name_network}")
+        del settings['network'][name_network]
+                    
                 
 def check_existing_memo(
           cache_users: dict,
