@@ -43,8 +43,8 @@ async def Update_Rewards(
         network_id: str,
         memo_delegate: dict,
         rewards_save: dict,
-        
-
+        commission_vald: float,
+        token_zeros: int
 ):
     log.info("#Update_Rewards")
     
@@ -72,9 +72,9 @@ async def Update_Rewards(
             return
         
         tmp = (rewards_user - rewards_save_f) * percent_memo
-        validator_commisstion = f"{(tmp / (100 - 0.05 * 100)) * (0.05 * 100) / 10 ** 6:.10f}"
-        user_get_rewards = f"{tmp / 10 ** 6 :.10f}"
-        log.info(f"Get Validator: {validator_commisstion}, User:  {user_get_rewards}")
+        validator_commisstion = f"{(tmp / (100 - commission_vald * 100)) * (commission_vald * 100) / 10 ** token_zeros:.10f}"
+        user_get_rewards = f"{tmp / 10 ** token_zeros :.10f}"
+        log.info(f"Get User:  {user_get_rewards} Validator: {validator_commisstion} {commission_vald}% token_zero: {token_zeros}")
 
         await memo.Update_User_Stats_Amount(userId=user_id, amountUserRewards=user_get_rewards, amountValidatorRewards=validator_commisstion)
         rewards_save[addrres] = str(rewards_user)
@@ -92,7 +92,7 @@ async def Update_Rewards(
 
             await process_addrres_reward(addrres=address, 
                                    origin_delegate=origin_delegate, 
-                                   memo_amount_delegate=memo_values[address] * 10 ** 6,
+                                   memo_amount_delegate=memo_values[address] * 10 ** token_zeros,
                                    rewards_save=rewards_save,
                                    user_id = cache_users[network_id][memo_id][address])
             
@@ -135,8 +135,11 @@ async def process_network(
             user_delegates[id_network] = {}
 
         rewards_save = rewards_json.get_json()
+        status_vald = await cosmos.Get_Status_Validator()
         await Update_Rewards(cosmos=cosmos, memo=memo, network_id=str(name_network.get("id")),
-                            memo_delegate=user_delegates, rewards_save=rewards_save)
+                            memo_delegate=user_delegates, rewards_save=rewards_save, 
+                            commission_vald = float(status_vald['validator']['commission']['commission_rates']['rate']), 
+                            token_zeros=settings['network'][name_network.get('name')]['token_zero'])
         
         # await asyncio.gather(*task)
         rewards_json.set_json(rewards_save)

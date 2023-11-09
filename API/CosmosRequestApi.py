@@ -347,7 +347,19 @@ class CosmosRequestApi():
                     log.error(f"Answer with server: {await response.text()}")
                     return "0"
 
+    async def Get_Status_Validator(self) -> list:
+        url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}"
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=url) as response:
+                if response.status == 200:
+                    log.info("Success, I get 200")
+                    data = await response.json()
+                    return data
+                else:
+                    log.error(f"Fail, I get {response.status}")
+                    log.error(f"Answer from server: {await response.text()}")
+                    return []
 
 
 
