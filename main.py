@@ -56,7 +56,7 @@ async def Update_Rewards(
             user_id: str
     ):
         log.info("#process_addrres_reward")
-        origin_amount_delegate = float(cosmos.Get_Stakers(addr=address)['balance']['amount'])  #float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
+        origin_amount_delegate = float(await cosmos.Get_Stakers(addr=address)['balance']['amount'])  #float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
         rewards_save_f = float(rewards_save[addrres])
 
         if origin_amount_delegate == 0 or memo_amount_delegate == 0:
