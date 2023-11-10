@@ -37,7 +37,7 @@ def to_tmpstmp_mc(
 def get_amount_from_addr(origin_delegate: list, addr: str) -> str:
     for staker_user in origin_delegate:
         if staker_user['delegation']['delegator_address'] == addr:
-            return staker_user['balance']['amount']    
+            return staker_user['balance']['amount']
     return "0"
 
 async def get_APR_from(
@@ -71,7 +71,7 @@ async def check_rpc(
                     
                     log.info(f"ID {id_log} -> {rpc} 200")
                     data = await response.json()
-                    if data["result"]["sync_info"]["catching_up"] == True:
+                    if data["result"]["sync_info"]["catching_up"] == True or data['result']['sync_info']['latest_block_height'] == 0:
                         
                         log.info(f"ID {id_log} -> {name_network} not already")
                         settings['network'][name_network]['rpc'] = ""

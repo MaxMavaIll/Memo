@@ -50,16 +50,18 @@ async def Update_Rewards(
     
     async def process_addrres_reward(
             addrres: str,
-            origin_delegate: list,
+            # origin_delegate: list,
             memo_amount_delegate: float,
             rewards_save: dict,
             user_id: str
     ):
         log.info("#process_addrres_reward")
-        origin_amount_delegate = float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
+        origin_amount_delegate = float(cosmos.Get_Stakers()['balance']['amount'])  #float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
         rewards_save_f = float(rewards_save[addrres])
 
         if origin_amount_delegate == 0 or memo_amount_delegate == 0:
+            log.info(f"ZERO: origin {origin_amount_delegate} ## memo {memo_amount_delegate}")
+            rewards_save[addrres] = "0.0"
             return
 
         rewards_user = float(await cosmos.Get_Rewards_User(address_user=address))
@@ -68,6 +70,7 @@ async def Update_Rewards(
         
         log.info(f"{rewards_user, type(rewards_user), rewards_save_f, type(rewards_save_f)}")
         if rewards_user < rewards_save_f: 
+            log.info(f"LOW {rewards_user} < {rewards_save_f}")
             rewards_save[addrres] = "0.0"
             return
         
@@ -79,7 +82,7 @@ async def Update_Rewards(
         await memo.Update_User_Stats_Amount(userId=user_id, amountUserRewards=user_get_rewards, amountValidatorRewards=validator_commisstion)
         rewards_save[addrres] = str(rewards_user)
 
-    origin_delegate = await cosmos.Get_Stakers()
+    # origin_delegate = await cosmos.Get_Stakers()
     
 
     for memo_id, memo_values  in memo_delegate[network_id].items():
@@ -91,7 +94,7 @@ async def Update_Rewards(
                 continue
 
             await process_addrres_reward(addrres=address, 
-                                   origin_delegate=origin_delegate, 
+                                #    origin_delegate=origin_delegate, 
                                    memo_amount_delegate=memo_values[address] * 10 ** token_zeros,
                                    rewards_save=rewards_save,
                                    user_id = cache_users[network_id][memo_id][address])
@@ -136,6 +139,8 @@ async def process_network(
 
         rewards_save = rewards_json.get_json()
         status_vald = await cosmos.Get_Status_Validator()
+        log.info(f"{id_log} | {name_network.get('name')} -> status_vald {type(status_vald)}")
+        log.info(f"{id_log} | {name_network.get('name')} -> status_vald {status_vald['validator']['commission']['commission_rates']['rate']}")
         await Update_Rewards(cosmos=cosmos, memo=memo, network_id=str(name_network.get("id")),
                             memo_delegate=user_delegates, rewards_save=rewards_save, 
                             commission_vald = float(status_vald['validator']['commission']['commission_rates']['rate']), 

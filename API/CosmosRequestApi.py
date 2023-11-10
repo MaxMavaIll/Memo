@@ -295,6 +295,9 @@ class CosmosRequestApi():
             
             
             height = settings_json['last_height'][self.network]
+
+            if last_height_network < height:
+                return
             
             log.info(f"now {height}, last {last_height_network}")
             for tmp_height in range(height, last_height_network):
@@ -316,15 +319,16 @@ class CosmosRequestApi():
             return {}
 
 
-    async def Get_Stakers(self) -> list:
-        url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}/delegations"
+    async def Get_Stakers(self, addr: str) -> list:
+        log.info(f"ID {self.id_log} | {self.network}  -> Get_Stakers")
+        url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}/delegations/{addr}"
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url=url) as response:
                 if response.status == 200:
                     log.info("Success, I get 200")
                     data = await response.json()
-                    return data["delegation_responses"]
+                    return data["delegation_response"]
                 else:
                     log.error(f"Fail, I get {response.status}")
                     log.error(f"Answer from server: {await response.text()}")
@@ -334,6 +338,7 @@ class CosmosRequestApi():
             self,
             address_user: str
     ) -> str:
+        log.info(f"ID {self.id_log} | {self.network}  -> Get_Rewards_User")
         url = f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}"
 
         async with aiohttp.ClientSession() as session:
@@ -348,6 +353,7 @@ class CosmosRequestApi():
                     return "0"
 
     async def Get_Status_Validator(self) -> list:
+        log.info(f"ID {self.id_log} | {self.network}  -> Get_Status_Validator")
         url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}"
 
         async with aiohttp.ClientSession() as session:
