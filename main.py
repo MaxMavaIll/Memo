@@ -75,8 +75,8 @@ async def Update_Rewards(
             return
         
         tmp = (rewards_user - rewards_save_f) * percent_memo
-        validator_commisstion = f"{(tmp / (100 - commission_vald * 100)) * (commission_vald * 100) / 10 ** token_zeros:.10f}"
-        user_get_rewards = f"{tmp / 10 ** token_zeros :.10f}"
+        validator_commisstion = f"{(tmp / (100 - commission_vald * 100)) * (commission_vald * 100) / 10 ** token_zeros:.14f}"
+        user_get_rewards = f"{tmp / 10 ** token_zeros :.14f}"
         log.info(f"Get User:  {user_get_rewards} Validator: {validator_commisstion} {commission_vald}% token_zero: {token_zeros}")
 
         await memo.Update_User_Stats_Amount(userId=user_id, amountUserRewards=user_get_rewards, amountValidatorRewards=validator_commisstion)
