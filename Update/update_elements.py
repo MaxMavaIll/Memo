@@ -215,19 +215,23 @@ def main():
             memo.Update_Symbols_Price(data=resul)
             log.info(f"Get price token: {resul}")
             
-            data2['APR'] = get_apr_keplr(driver, data2) if config_toml['Update']['enable_chromeDriver'] else get_apr_math()
+            # data2['APR'] = get_apr_keplr(driver, data2) if config_toml['Update']['enable_chromeDriver'] else get_apr_math()
             
             # get_validator_commision()
-            log.info(f"Get price token: {resul} {data2['APR']}")
+            # log.info(f"Get price token: {resul} {data2['APR']}")
             
 
             driver2.quit()
+            driver2.close()
             driver.quit()
+            driver.close()
 
         except:
             log.exception("Error APR")
             driver2.quit()
+            driver2.close()
             driver.quit()
+            driver.close()
     
 
 

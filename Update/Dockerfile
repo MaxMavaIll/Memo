@@ -10,6 +10,7 @@ COPY ./Update .
 COPY requirements.txt .
 COPY WorkJson.py .
 COPY ./API /app/API
+COPY ./Telegram_Bot /app/Telegram_Bot
 
 RUN pip install -r requirements.txt
 
