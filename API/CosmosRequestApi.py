@@ -140,7 +140,7 @@ class CosmosRequestApi():
         url = f"{self.rest}/cosmos/tx/v1beta1/txs/{hash}"
         
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+            async with session.get(url, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
                     log.debug(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
                     data = await response.json()
@@ -157,7 +157,7 @@ class CosmosRequestApi():
         
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(url,timeout=aiohttp.ClientTimeout(total=10)) as response:
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=10), ssl=config_toml['ssl']) as response:
                     if response.status == 200:
                         log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
                         data = await response.json()
@@ -266,7 +266,7 @@ class CosmosRequestApi():
         url = f"{self.rpc}/status"
         
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+            async with session.get(url, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
                     log.info(f"ID {self.id_log} | {self.network}  -> Success, I get 200")
                     data = await response.json()
@@ -299,7 +299,7 @@ class CosmosRequestApi():
             if last_height_network < height:
                 return
             
-            log.info(f"now {height}, last {last_height_network}")
+            log.info(f"last {last_height_network}, now {height}")
             for tmp_height in range(height, last_height_network):
                 
                 log.info(f"ID {self.id_log} | {self.network}  -> \n\nHeight: {tmp_height} - {last_height_network}\n")
@@ -324,7 +324,7 @@ class CosmosRequestApi():
         url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}/delegations/{addr}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(url=url) as response:
+            async with session.get(url=url, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
                     log.info("Success, I get 200")
                     data = await response.json()
@@ -342,7 +342,7 @@ class CosmosRequestApi():
         url = f"{self.rest}/cosmos/distribution/v1beta1/delegators/{address_user}/rewards/{self.valoper_address}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+            async with session.get(url, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
                     log.info("Success, I get 200")
                     data = await response.json()
@@ -357,7 +357,7 @@ class CosmosRequestApi():
         url = f"{self.rest}/cosmos/staking/v1beta1/validators/{self.valoper_address}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(url=url) as response:
+            async with session.get(url=url, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
                     log.info("Success, I get 200")
                     data = await response.json()

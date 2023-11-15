@@ -142,7 +142,7 @@ class MemeApi():
         # answer = requests.post(f"{self.HOSTNAME}/api/users", headers=headers, data=payload)
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(f"{self.HOSTNAME}/api/users", headers=headers, data=json.dumps(payload)) as response:
+            async with session.post(f"{self.HOSTNAME}/api/users", headers=headers, data=json.dumps(payload), ssl=config_toml['ssl']) as response:
                 if response.status == 201:
                     log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
                     log.debug(await response.text())
@@ -204,7 +204,7 @@ class MemeApi():
         }
 
         async with aiohttp.ClientSession() as session:
-            async with session.patch(f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload) as response:
+            async with session.patch(f"{self.HOSTNAME}/api/users/stats", headers=headers, data=payload, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
                     log.info(f"{self.id_log} | {self.network}  -> Success, I get 200")
                     log.debug(await response.text())

@@ -39,7 +39,7 @@ async def send_message(log_id: int, message: str):
             data = {'chat_id': chat_id, 'text': message, 'parse_mode': 'HTML'}
             
             async with aiohttp.ClientSession() as session:
-                async with session.post(url=url, data=data) as response:
+                async with session.post(url=url, data=data, ssl=config_toml['ssl']) as response:
 
                     if response.status == 200:
                         log.info(f"ID: {log_id} -> Повідомлення було відправиленно успішно код {response.status}")
