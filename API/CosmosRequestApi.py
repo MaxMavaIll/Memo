@@ -64,8 +64,8 @@ class CosmosRequestApi():
 
         
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {answer.status_code}")
+            log.error(f"ID {self.id_log} | {self.network}  -> Answer with server: {answer.text}")
 
     def Get_Account_Wallet(
             self, 
@@ -82,8 +82,8 @@ class CosmosRequestApi():
             return int(data['account']['sequence']) - 1
 
         else:
-            log.error(f"Fail, I get {answer.status_code}")
-            log.error(f"Answer with server: {answer.text}")
+            log.error(f"ID {self.id_log} | {self.network}  ->Fail, I get {answer.status_code}")
+            log.error(f"ID {self.id_log} | {self.network}  ->Answer with server: {answer.text}")
 
     def Tx_Search(
             self,
@@ -110,8 +110,8 @@ class CosmosRequestApi():
                 tmp += 1
                 
             else:
-                log.error(f"Fail, I get {answer.status_code}")
-                log.error(f"Answer with server: {answer.text}")
+                log.error(f"ID {self.id_log} | {self.network}  ->Fail, I get {answer.status_code}")
+                log.error(f"ID {self.id_log} | {self.network}  ->Answer with server: {answer.text}")
 
         return tx_hash
         
@@ -131,8 +131,8 @@ class CosmosRequestApi():
 
                 
             else:
-                log.error(f"Fail, I get {answer.status_code}")
-                log.error(f"Answer with server: {answer.text}")
+                log.error(f"ID {self.id_log} | {self.network}  ->Fail, I get {answer.status_code}")
+                log.error(f"ID {self.id_log} | {self.network}  ->Answer with server: {answer.text}")
     
     async def Get_Memo_Address_With_Transaction(self, hash: str) -> dict:
         log.debug(f"ID {self.id_log} | {self.network}  -> Get info with Hash user :: {hash}")
@@ -146,8 +146,8 @@ class CosmosRequestApi():
                     data = await response.json()
                     return data['tx']['body'], data, hash
                 else:
-                    log.error(f"Fail, I get {response.status}")
-                    log.error(f"Answer with server: {await response.text()}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
                     return {}, {}, hash
   
     async def Get_Hash_Transactions_Height(self, height: int) -> list:
@@ -173,8 +173,8 @@ class CosmosRequestApi():
                         tmp += [tmp2['hash'] for tmp2 in data['result']['txs']]
 
                     else:
-                        log.error(f"Fail, I get {response.status}")
-                        # log.error(f"Answer with server: {await response.text()}")
+                        log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                        log.error(f"ID {self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
                         break
             
             index_page += 1
@@ -287,8 +287,8 @@ class CosmosRequestApi():
                     data = await response.json()
                     return int(data['result']['sync_info']['latest_block_height'])
                 else:
-                    log.error(f"Fail, I get {response.status}")
-                    log.error(f"Answer with server: {await response.text()}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
                     return 0  # Повертати значення за замовчуванням або інше значення за необхідності
 
     async def Get_Block_Memo(
@@ -345,8 +345,8 @@ class CosmosRequestApi():
                     data = await response.json()
                     return data["delegation_response"]
                 else:
-                    log.error(f"Fail, I get {response.status}")
-                    log.error(f"Answer from server: {await response.text()}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Answer from server: {await response.text()}")
                     return []
 
     async def Get_Rewards_User(
@@ -363,8 +363,8 @@ class CosmosRequestApi():
                     data = await response.json()
                     return data['rewards'][-1]['amount']
                 else:
-                    log.error(f"Fail, I get {response.status}")
-                    log.error(f"Answer with server: {await response.text()}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Answer with server: {await response.text()}")
                     return "0"
 
     async def Get_Status_Validator(self) -> list:
@@ -378,8 +378,8 @@ class CosmosRequestApi():
                     data = await response.json()
                     return data
                 else:
-                    log.error(f"Fail, I get {response.status}")
-                    log.error(f"Answer from server: {await response.text()}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Fail, I get {response.status}")
+                    log.error(f"ID {self.id_log} | {self.network}  -> Answer from server: {await response.text()}")
                     return []
 
 
