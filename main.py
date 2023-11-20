@@ -67,13 +67,13 @@ async def Update_Rewards(
         log.info("#process_addrres_reward")
         origin_amount_delegate = float(
             (await cosmos.Get_Stakers(addr=address))['balance']['amount'])  #float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
-        rewards_save_f = float(rewards_save[addrres])
+        rewards_save_f = float(rewards_save[addrres]['now_price'])
 
         if origin_amount_delegate == 0 \
                 or memo_amount_delegate == 0:
             log.info(f"ZERO: origin {origin_amount_delegate} \
                      ## memo {memo_amount_delegate}")
-            rewards_save[addrres] = "0.0"
+            rewards_save[addrres]['now_price'] = "0.0"
             return
 
         rewards_user = float(
@@ -87,12 +87,16 @@ async def Update_Rewards(
         log.info(f"{rewards_user, type(rewards_user), rewards_save_f, type(rewards_save_f)}")
         if rewards_user < rewards_save_f: 
             log.info(f"LOW {rewards_user} < {rewards_save_f}")
-            rewards_save[addrres] = "0.0"
+            rewards_save[addrres]['now_price'] = "0.0"
             return
         
         tmp = (rewards_user - rewards_save_f) * percent_memo
         validator_commisstion = f"{(tmp / (100 - commission_vald * 100)) * (commission_vald * 100) / 10 ** token_zeros:.14f}"
         user_get_rewards = f"{tmp / 10 ** token_zeros :.14f}"
+        
+        log.info(user_get_rewards)
+
+        rewards_save[addrres]['all_price'] += float(user_get_rewards) * 10 ** token_zeros
 
         log.info(f"Get User:  {user_get_rewards}" +
                  f"Validator: {validator_commisstion} {commission_vald}%" + 
@@ -102,7 +106,7 @@ async def Update_Rewards(
             amountUserRewards=user_get_rewards, 
             amountValidatorRewards=validator_commisstion)
         
-        rewards_save[addrres] = str(rewards_user)
+        rewards_save[addrres]['now_price'] = str(rewards_user)
         rewards_json.set_json(rewards_save)
 
 
@@ -236,7 +240,7 @@ async def process_network(
 
                 if address not in rewards_save:
                     rewards_save = rewards_json.get_json()
-                    rewards_save[address] = await cosmos.Get_Rewards_User(address_user=address)
+                    rewards_save[address] = {"now_price": '0.0', 'all_price': 0}
                     rewards_json.set_json(rewards_save)
 
     except:

@@ -85,7 +85,8 @@ async def check_rpc(
                     settings['network'][name_network]['rpc'] = ""
                     continue
             
-            await asyncio.sleep(6)
+            log.info(f"Wait 2 anwser rpc {network['time_wait_new_block']} sec")
+            await asyncio.sleep(network['time_wait_new_block'])
 
             async with session.get(url, ssl=config_toml['ssl']) as response:
                 if response.status == 200:
