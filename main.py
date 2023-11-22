@@ -162,18 +162,20 @@ async def process_network(
         status_vald = await cosmos.Get_Status_Validator()
         log.info(f"{id_log} | {name_network.get('name')}\
                   -> status_vald {type(status_vald)}")
-        log.info(f"{id_log} | {name_network.get('name')} -> \
-                 status_vald {status_vald['validator']['commission']['commission_rates']['rate']}")
         
-        await Update_Rewards(
-            cosmos=cosmos, 
-            memo=memo, 
-            network_id=str(name_network.get("id")),
-            memo_delegate=user_delegates, 
-            rewards_save=rewards_save, 
-            commission_vald = float(
-                status_vald['validator']['commission']['commission_rates']['rate']), 
-            token_zeros=settings['network'][name_network.get('name')]['token_zero'])
+        if status_vald != []:
+            log.info(f"{id_log} | {name_network.get('name')} -> \
+                    status_vald {status_vald['validator']['commission']['commission_rates']['rate']}")
+            
+            await Update_Rewards(
+                cosmos=cosmos, 
+                memo=memo, 
+                network_id=str(name_network.get("id")),
+                memo_delegate=user_delegates, 
+                rewards_save=rewards_save, 
+                commission_vald = float(
+                    status_vald['validator']['commission']['commission_rates']['rate']), 
+                token_zeros=settings['network'][name_network.get('name')]['token_zero'])
         
         data_memo_address_time = await cosmos.Get_Block_Memo(
             transactions_type=transactions_type, 
