@@ -65,49 +65,63 @@ async def Update_Rewards(
             rewards_save: dict,
             user_id: str):
         log.info("#process_addrres_reward")
-        origin_amount_delegate = float(
-            (await cosmos.Get_Stakers(addr=address))['balance']['amount'])  #float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
-        rewards_save_f = float(rewards_save[addrres]['now_price'])
+        try: 
 
-        if origin_amount_delegate == 0 \
-                or memo_amount_delegate == 0:
-            log.info(f"ZERO: origin {origin_amount_delegate} \
-                     ## memo {memo_amount_delegate}")
-            rewards_save[addrres]['now_price'] = "0.0"
+            origin_amount_delegate = float(
+                (await cosmos.Get_Stakers(addr=address))['balance']['amount'])  #float (get_amount_from_addr(origin_delegate=origin_delegate, addr=addrres))
+            rewards_save_f = float(rewards_save[addrres]['now_price'])
+
+            if origin_amount_delegate == 0 \
+                    or memo_amount_delegate == 0:
+                log.info(f"ZERO: origin {origin_amount_delegate} \
+                        ## memo {memo_amount_delegate}")
+                rewards_save[addrres]['now_price'] = "0.0"
+                return
+
+            rewards_user = float(
+                await cosmos.Get_Rewards_User(address_user=address))
+            percent_memo = get_percent_memo(
+                origin_amount_delegate=origin_amount_delegate, 
+                memo_amount_delegate=memo_amount_delegate)
+            
+            log.info(f"{address}: origin {origin_amount_delegate} \
+                    ## memo {memo_amount_delegate} || {percent_memo}%")
+            log.info(f"{rewards_user, type(rewards_user), rewards_save_f, type(rewards_save_f)}")
+
+            if rewards_user == 0:
+                log.info(f"rewards_user == 0 | i return none")
+                return
+            elif rewards_user < rewards_save_f: 
+                log.info(f"LOW {rewards_user} < {rewards_save_f}")
+                rewards_save[addrres]['now_price'] = "0.0"
+                return
+            
+            tmp = (rewards_user - rewards_save_f) * percent_memo
+            validator_commisstion = (tmp * (commission_vald * 100) / 100 )
+            user_get_rewards = tmp 
+            
+            rewards_save[addrres]['all_price'] += user_get_rewards
+
+            validator_commisstion = f"{validator_commisstion / 10 ** token_zeros:.14f}"
+            user_get_rewards = f"{user_get_rewards / 10 ** token_zeros :.14f}"
+
+            rewards_save[addrres]['now_price'] = str(rewards_user)
+
+            log.info(f"Get User:  {user_get_rewards}\n" +
+                    f"Validator: {validator_commisstion} {commission_vald}%\n" + 
+                    f"token_zero: {token_zeros}\n" +
+                    f"Now_price: {rewards_save[addrres]['now_price']}\n" +
+                    f"all_price: {rewards_save[addrres]['all_price']} {percent_memo}%")
+            await memo.Update_User_Stats_Amount(
+                userId=user_id, 
+                amountUserRewards=user_get_rewards, 
+                amountValidatorRewards=validator_commisstion)
+            
+            rewards_json.set_json(rewards_save)
+            
+        except:
+            log.exception("Error Main")
             return
-
-        rewards_user = float(
-            await cosmos.Get_Rewards_User(address_user=address))
-        percent_memo = get_percent_memo(
-            origin_amount_delegate=origin_amount_delegate, 
-            memo_amount_delegate=memo_amount_delegate)
-        
-        log.info(f"{address}: origin {origin_amount_delegate} \
-                 ## memo {memo_amount_delegate} || {percent_memo}%")
-        log.info(f"{rewards_user, type(rewards_user), rewards_save_f, type(rewards_save_f)}")
-        if rewards_user < rewards_save_f: 
-            log.info(f"LOW {rewards_user} < {rewards_save_f}")
-            rewards_save[addrres]['now_price'] = "0.0"
-            return
-        
-        tmp = (rewards_user - rewards_save_f) * percent_memo
-        validator_commisstion = f"{(tmp / (100 - commission_vald * 100)) * (commission_vald * 100) / 10 ** token_zeros:.14f}"
-        user_get_rewards = f"{tmp / 10 ** token_zeros :.14f}"
-        
-        log.info(user_get_rewards)
-
-        rewards_save[addrres]['all_price'] += float(user_get_rewards) * 10 ** token_zeros
-
-        log.info(f"Get User:  {user_get_rewards}" +
-                 f"Validator: {validator_commisstion} {commission_vald}%" + 
-                 f"token_zero: {token_zeros}")
-        await memo.Update_User_Stats_Amount(
-            userId=user_id, 
-            amountUserRewards=user_get_rewards, 
-            amountValidatorRewards=validator_commisstion)
-        
-        rewards_save[addrres]['now_price'] = str(rewards_user)
-        rewards_json.set_json(rewards_save)
 
 
     for memo_id, memo_values in memo_delegate[network_id].items():
