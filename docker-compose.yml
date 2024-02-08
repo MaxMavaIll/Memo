@@ -14,16 +14,3 @@ services:
       - ./Update/network_price.json:/app/Update/network_price.json
       - ./Rewards/rewards.json:/app/Rewards/rewards.json
     command: ["python", "main.py"]
-
-  apr:
-    image: server_apr
-    build:
-      context: . 
-      dockerfile: ./Update/Dockerfile
-    container_name: apr_monitoring
-    volumes:
-      - ./logs:/app/logs/
-      - ./config.toml:/app/config.toml
-      - ./settings.json:/app/settings.json
-      - ./Update/network_price.json:/app/network_price.json
-    command: ["python", "update_elements.py"]
