@@ -228,7 +228,7 @@ class CosmosRequestApi():
                 for wallet_type in wallet_types:
                     log.info(f"Memo_Blockchain: {data['memo']} || Memo_w3coins: {wallet_type.get('name')}")
                     
-                    if data['memo'] != wallet_type.get('name'):
+                    if data['memo'].lower() != wallet_type.get('name').lower():
                         continue
                     
                     amount = f"{int(data['messages'][0]['amount']['amount']) / (10 ** config_toml['network'][self.network]['token_zero']):.8f}"
