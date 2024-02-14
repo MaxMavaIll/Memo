@@ -144,4 +144,4 @@ def get_percent_memo(
         origin_amount_delegate, 
         memo_amount_delegate) -> float:
     x =  ((memo_amount_delegate * 100) / origin_amount_delegate) / 100
-    return round(x, 2)
+    return round(x, 6)

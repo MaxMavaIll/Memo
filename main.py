@@ -76,6 +76,7 @@ async def Update_Rewards(
                 log.info(f"ZERO: origin {origin_amount_delegate} \
                         ## memo {memo_amount_delegate}")
                 rewards_save[addrres]['now_price'] = "0.0"
+                rewards_json.set_json(rewards_save)
                 return
 
             rewards_user = float(
@@ -94,6 +95,7 @@ async def Update_Rewards(
             elif rewards_user < rewards_save_f: 
                 log.info(f"LOW {rewards_user} < {rewards_save_f}")
                 rewards_save[addrres]['now_price'] = "0.0"
+                rewards_json.set_json(rewards_save)
                 return
             
             tmp = (rewards_user - rewards_save_f) * percent_memo
@@ -149,8 +151,7 @@ async def process_network(
         data: dict,
         transactions_type: list,
         wallet_type: list,
-        settings: dict,
-        data2: dict):
+        settings: dict):
 
     id_log = data["id"]
     memo = MemeApi.MemeApi(id=id_log, network=name_network.get('name'))
@@ -277,8 +278,6 @@ async def main():
         try:
             log.info("Start")
 
-            urls_kepler_json = WorkWithJson('Update/network_price.json')
-            data2 = urls_kepler_json.get_json()
             settings = copy.deepcopy(config_toml)
 
             # Провірка RPC
@@ -306,7 +305,7 @@ async def main():
             
             # Запуск моніторингу мереж
             
-            tasks = [process_network(name_network, data, transactions_type, wallet_type, settings, data2) for name_network in change_blockchain]
+            tasks = [process_network(name_network, data, transactions_type, wallet_type, settings) for name_network in change_blockchain]
             await asyncio.gather(*tasks)
 
             data["id"] += 1
